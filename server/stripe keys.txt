@@ -1,0 +1,6 @@
+pKey: pk_live_xwrI5L1ZgfAtaEgMJs4c1Iqq
+sKey: sk_live_zKwK9ePish8SWiI0QrRYrdoQ
+
+
+pKey: pk_test_uFouDrps9kB5ambS2BauKdrA
+sKey: sk_test_WGocjwW9Qm4LbHyK2fFmnBDa
