@@ -41,7 +41,7 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 //console.log("STRIPE KEY", process.env.STRIPE_PRIVATE_KEY)
 const mongodb = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
-const GC_MONGO_URL = "mongodb+srv://appuser:AppData2022@cluster0.aga82.mongodb.net/test";
+const GC_MONGO_URL =process.env.MONGO_URL;
 const GC_PUBLIC_DIR = path.join(__dirname + '/public/index.html').split("/index.html")[0];
 
 const storeItems = new Map([
