@@ -43,7 +43,10 @@ module.exports =
             }, { collection: 'key_values' });
             this.KeyValueData = mongoose.model('KeyValueData', this.keyValueSchema);
         }
-        
+        addKeyValue = async (key, value) => {
+            const rv = await this.KeyValueData.create({ key: key, value: value });
+            return rv;
+        }
         getKeyValue = async (key) => {
             const doc = await this.KeyValueData.find({ key: key })
             return doc[0].value;
@@ -89,7 +92,7 @@ module.exports =
         addDonation = async (email,fullName, amount) => {
             try {
                // const user = await this.getUserByEmail(email);
-                console.log("addDonation.user:", email, user);
+                console.log("addDonation.user:", email, fullName);
                 const userId = 1; //(user ? user.userId : "");
 
                 const id = new Date().getTime();

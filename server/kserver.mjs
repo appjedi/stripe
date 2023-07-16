@@ -9,7 +9,8 @@ import path  from 'path';
 import session  from 'koa-session';
 import MainDAO  from "./dao/MainDAO.js";
 import { charge } from './services/stripe.mjs';
-import path from 'path';
+import serve from "koa-static"; // CJS: require('koa-static')
+
 // 
 dotenv.config();
 
@@ -30,6 +31,10 @@ const GC_STUDENTS = [];
 const GC_LEVELS = ['None', 'White', 'Yellow', 'Orange', 'Green', 'Blue', 'Purple', 'Brown 3rd', 'Brown 2nd', 'Brown 1st', 'Shodan', 'Nidan', 'Sandan'];
 const GC_MONGO_DB_NAME = "wkk";
 // 
+
+console.log("DIRNAME",path.resolve());
+const GC_DIRNAME = path.resolve();
+const __dirname = GC_DIRNAME+"/";
 render(app, {
     root: path.join(__dirname, 'views'),
     layout: 'layout',
@@ -40,10 +45,15 @@ render(app, {
 app.use(router.routes()).use(router.allowedMethods());
 
 router.get("/", async (ctx) => {
+    await ctx.render('stripe');
 });
 //  
-router.get("/add", async (ctx) => {
-  await ctx.render('add');
+router.get("/key/:key/:val", async (ctx) => {
+    const key = ctx.params.key;
+    const val = ctx.params.val;
+    const rv = await dao.addKeyValue(key, val);
+   // const val = await dao.getKeyValue(key)
+    ctx.body = rv;
 });
 router.get("/release", async (ctx) => {
    ctx.body=GC_RELEASE;
@@ -73,8 +83,8 @@ router.get('/login', (ctx) => {
 });
 router.post("/charge", async (ctx) => {
 try {
-    console.log("BODY:", req.body);
-    const resp =await charge(ctx.request.body.email, ctx.request.body.fullName, ctx.request.body.amount);
+    console.log("BODY:", ctx.request.body);
+    const resp =await charge(dao,ctx.request.body.email, ctx.request.body.fullName, ctx.request.body.amount);
    
     
     ctx.body = resp;
@@ -93,7 +103,7 @@ router.get("/success/:id/:token", async (ctx) => {
 
     console.log("success:", obj);
    
-      ctx.render("confirm", {obj:obj})
+    await ctx.render('confirm', {obj:obj})
   } catch (e) {
     const obj = { status: -1, message: "error", id: id }
     res.send(obj);
