@@ -30,8 +30,5 @@ button.addEventListener("click", async() => {
   }
 })
 
-var res = sendMessage("hello"); // synch
-sendMessage("hello", function (res) { // async
-  // res
-});
+
 
