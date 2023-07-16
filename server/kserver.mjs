@@ -1,16 +1,18 @@
 // source: https://www.youtube.com/watch?v=z84uTk5zmak
-require("dotenv").config()
-
-const Koa = require('koa');
-const KoaRouter = require('koa-router');
-const json = require('koa-json');
-const render = require('koa-ejs');
-const bodyParser = require('koa-bodyparser');
-const path = require('path');
-const session = require('koa-session');
-const MainDAO = require("./dao/DAOClass.js");
-const {charge} = require('./services/stripe.mjs')
+import dotenv from 'dotenv'
+import Koa from 'koa';
+import KoaRouter from 'koa-router';
+import json from 'koa-json';
+import render  from 'koa-ejs';
+import bodyParser  from 'koa-bodyparser';
+import path  from 'path';
+import session  from 'koa-session';
+import MainDAO  from "./dao/MainDAO.js";
+import { charge } from './services/stripe.mjs';
+import path from 'path';
 // 
+dotenv.config();
+
 const app = new Koa();
 const router = new KoaRouter();
 const PORT = 3000;
@@ -101,7 +103,6 @@ router.get("/success/:id/:token", async (ctx) => {
 router.get("/cancel/:id/:token", async (ctx) => {
     const id = ctx.params.id;
     try {
-
         const obj = { status: 1, message: "paid", id: id }
         dao.updateFromStripe(id, -1);
 
