@@ -117,7 +117,8 @@ app.get("/pay/:id", async (req, res) => {
       success_url: `${process.env.CLIENT_URL}/success/${items[0].charge_id}/123`,
       cancel_url: `${process.env.CLIENT_URL}/cancel?id=${items[0].charge_id}`,
     })
-    res.redirect(session.url);
+    //res.redirect(session.url);
+    res.send(s);
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
@@ -197,8 +198,9 @@ app.post("/charge", async (req, res) => {
       cliendId: req.body.cliendId,
       fullName: req.body.fullName,
       email: req.body.email,
-      quantity: req.body.quantity,
-      postDate: dt
+      amount: req.body.amount,
+      postDate: dt,
+      status:0
     };
 
     console.log("TimeID:", id);

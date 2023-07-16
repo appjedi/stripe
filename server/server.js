@@ -157,47 +157,84 @@ app.get("/charge/:id", async (req, res) => {
 */
 
 app.get("/pay/:id", async (req, res) => {
-  const items = getCharges(req.params.id);
-  const clientId = req.params.id;
-  console.log("PAY",items);
-  try {
-    console.log("checkout");
-    const lineItems = items.map(item => {
-      return {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: item.description,
-          },
-          unit_amount: parseInt(item.amount) * 100,
-        },
-        quantity: item.quantity
-
-      }
-    });
-    console.log("lineItems:", lineItems);
-    const test = [{
-      "price_data": {
-        "currency": "usd", "product_data":
-          { "name": items[0].description },
-        "unit_amount": parseInt(items[0].amount) * 100
-      },
-      "quantity": parseInt(items[0].quantity)
-    }];
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: lineItems,
-      client_reference_id: items[0].charge_id,
-      success_url: `${process.env.CLIENT_URL}/success/${items[0].charge_id}/2023`,
-      cancel_url: `${process.env.CLIENT_URL}/cancel/${items[0].charge_id}/2023`,
-    })
-    res.redirect(session.url);
+  try{
+  
+    const url = await charge();
+    res.redirect(url);
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
 })
+const charge = async (item)=>{
+  //const items = getCharges(id);
+  const clientId = item.id;
+  console.log("PAY",item);
+  try {
+    console.log("checkout");
+  
+    const lineItems = [{
+            "price_data": {
+                "currency": "usd", "product_data":
+                    { "name": item.description },
+                "unit_amount": item.amount * 100
+            },
+            "quantity": 1
+    }];
+    
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: lineItems,
+      client_reference_id: item.id,
+      success_url: `${process.env.CLIENT_URL}/success/${item.id}/2023`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel/${item.id}/2023`,
+    })
+    return { status: 1, url: session.url };
+  } catch (e) {
+    return {status: -1, url:"error"}
+  }
+}
+app.post("/charge", async (req, res) => {
+  try {
+    console.log("BODY:", req.body);
+    const dt = new Date();
+    const id = dt.getTime();
+    const item = {
+      id: id,
+      itemId: req.body.itemId,
+      cliendId: req.body.cliendId,
+      fullName: req.body.fullName,
+      email: req.body.email,
+      amount: parseInt(req.body.amount),
+      description:"Donation",
+      postDate: dt,
+      status: 0,
+      paid:null
+    };
+   
+    console.log("TimeID:", id);
+    const jsonData = JSON.stringify(item);
+    console.log("ITEM:", item);
+//    const storeItem = storeItems.get(1)
+    const insert = "INSERT INTO charges(charge_id, item_id,client_id,email, full_name, json_data,description, amount,quantity,entered,paid,status,paid_by,token)VALUES";
+    const values = `('${id}', ${item.itemId}, ${item.cliendId}, '${item.email}', '${item.fullName}', '${jsonData}', 'Donation', ${item.amount},1, SYSDATE(), 0, 0, '', '')`;
+    console.log("INSERT", insert + values);
+   // connection.query(insert + values);
+    mongoInsert(item);
+    const s = await charge(item);
+    //console.log("STRIPE", s);
+    if (s.status === 1000)
+    {
+      console.log("STRIPE", s.url);
+      res.redirect(s.url);  
+    }
+    res.send({ status: 1, id:id,message: "charged posted", url:s.url });
+  } catch (e) {
+    console.log("Post error: ", e);
+    res.send({ status: -1, id:0,message: "error posting...", errMsg: e });
+  }
+
+});
 app.get("/dbtest", async (req, res) => {
   const results = connection.query('SELECT * FROM users');
 
@@ -221,9 +258,9 @@ app.get("/success/:id/:token", async (req, res) => {
     const obj = { status: 1, message: "paid", id: id }
     const update = `UPDATE charges SET paid = SYSDATE(), status = 1 WHERE charge_id = '${id}'`;
     console.log("UPDATE", update);
-    connection.query(update);
+    //connection.query(update);
     const charge = await getCharge(parseInt(id));
-    console.log("CHARGE", charge);
+    console.log("CHARGE:", charge);
     charge['status'] = 1;
     charge['paid'] = new Date().getTime();
 
@@ -290,67 +327,38 @@ app.get("/chargeTest/:id/:name/:email", async (req, res) => {
     res.send({ status: -1, message: "error posting...", errMsg: e });
   }
 });
-app.post("/charge", async (req, res) => {
-  try {
-    console.log("BODY:", req.body);
-    const dt = new Date();
-    const id = dt.getTime();
-    const item = {
-      id: id,
-      itemId: req.body.itemId,
-      cliendId: req.body.cliendId,
-      fullName: req.body.fullName,
-      email: req.body.email,
-      quantity: req.body.quantity,
-      postDate: dt
-    };
-    const test = JSON.parse(req.body.test);
-    test.forEach((row) => {
-      console.log(row.id, " : ", row.name);
-    });
-    console.log("TimeID:", id);
-    const jsonData = JSON.stringify(item);
-    console.log("ITEM:", item);
-    const storeItem = storeItems.get(parseInt(item.itemId))
-    const insert = "INSERT INTO charges(charge_id, item_id,client_id,email, full_name, json_data,description, amount,quantity,entered,paid,status,paid_by,token)VALUES";
-    const values = `('${id}', ${item.itemId}, ${item.cliendId}, '${item.email}', '${item.fullName}', '${jsonData}', '${storeItem.name}', ${storeItem.priceInCents}, ${item.quantity}, SYSDATE(), 0, 0, '', '')`;
-    console.log("INSERT", insert + values);
-    connection.query(insert + values);
-   // mongoInsert(item);
-    res.send({ status: 1, message: "charged posted" });
-  } catch (e) {
-    console.log("Post error: ", e);
-    res.send({ status: -1, message: "error posting...", errMsg: e });
-  }
-
-});
+const GC_MONGO_DOC = "donations";
+const GC_MONGO_DB = "wkk";
 const mongoInsert = async (obj) => {
   MongoClient.connect(GC_MONGO_URL, { useUnifiedTopology: true }, function (err, db) {
     if (err)
       throw err;
-    var dbo = db.db("test");
+    var dbo = db.db(GC_MONGO_DB);
 
-    dbo.collection("charges").insertOne(obj);
+    dbo.collection(GC_MONGO_DOC).insertOne(obj);
     // 
   });
 }
 const mongoUpate = async (obj) => {
-  MongoClient.connect(GC_MONGO_URL, { useUnifiedTopology: true }, function (err, db) {
-    if (err)
-      throw err;
-    var dbo = db.db("test");
+  console.log("mongoUpate:", obj);
+  try {
+    const db = await MongoClient.connect(GC_MONGO_URL, { useUnifiedTopology: true });
+  
+    var dbo = db.db(GC_MONGO_DB);
     //  dbo.collection.update({ 'id': obj.id }, { $set: { 'status': obj.status, paid: obj.paid } })
-    dbo.collection("charges").updateOne({ 'id': obj.id }, { $set: { 'status': obj.status, paid: obj.paid } });
-
-  });
+    const resp = await dbo.collection(GC_MONGO_DOC).updateOne({ "id": obj.id }, { $set: { "status": obj.status, paid: obj.paid } });
+    console.log("Mongo Updated:", resp);
+  } catch (e) {
+    console.log("mongoUpate.error:", e);
+  }
 }
 const getCharge = async (id) => {
   try {
-
     const query = id === 0 ? {} : { id: id };
     const db = await MongoClient.connect(GC_MONGO_URL, { useUnifiedTopology: true });
-    var dbo = db.db("test");
-    const rows = await dbo.collection("charges").find(query).toArray();
+    console.log("GC_MONGO_URL", GC_MONGO_URL);
+    var dbo = db.db(GC_MONGO_DB);
+    const rows = await dbo.collection(GC_MONGO_DOC).find(query).toArray();
     console.log(id, "ROWS:", rows);
     if (rows)
       return id === 0 ? rows : rows[0];
