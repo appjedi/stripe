@@ -34,7 +34,8 @@ const GC_MONGO_DB_NAME = "wkk";
 
 console.log("DIRNAME",path.resolve());
 const GC_DIRNAME = path.resolve();
-const __dirname = GC_DIRNAME+"/";
+const __dirname = GC_DIRNAME + "/";
+const GC_SERVER_URL = process.env.SERVER_URL;
 render(app, {
     root: path.join(__dirname, 'views'),
     layout: 'layout',
@@ -45,7 +46,7 @@ render(app, {
 app.use(router.routes()).use(router.allowedMethods());
 
 router.get("/", async (ctx) => {
-    await ctx.render('stripe');
+    await ctx.render('stripe', {serverURL:GC_SERVER_URL});
 });
 //  
 router.get("/key/:key/:val", async (ctx) => {
