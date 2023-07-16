@@ -60,7 +60,7 @@
         const json = await resp.json();
         console.log("JSON", json);
         if (json.status === 200) {
-          window.open(json.url);
+          window.location.replace(json.url);
         }
       });
     </script>

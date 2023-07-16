@@ -8,7 +8,7 @@ import bodyParser  from 'koa-bodyparser';
 import path  from 'path';
 import session  from 'koa-session';
 import MainDAO  from "./dao/MainDAO.js";
-import { charge } from './services/stripe.mjs';
+import Charge from './services/stripe.mjs';
 import serve from "koa-static"; // CJS: require('koa-static')
 
 // 
@@ -84,9 +84,7 @@ router.get('/login', (ctx) => {
 router.post("/charge", async (ctx) => {
 try {
     console.log("BODY:", ctx.request.body);
-    const resp =await charge(dao,ctx.request.body.email, ctx.request.body.fullName, ctx.request.body.amount);
-   
-    
+    const resp =await Charge.charge(dao,ctx.request.body.email, ctx.request.body.fullName, ctx.request.body.amount);
     ctx.body = resp;
   } catch (e) {
     console.log("Post error: ", e);
