@@ -7,7 +7,9 @@ import render  from 'koa-ejs';
 import bodyParser  from 'koa-bodyparser';
 import path  from 'path';
 import session  from 'koa-session';
-import MainDAO  from "./dao/MainDAO.js";
+import MainDAO from "./dao/MainDAO.js";
+import MyDAO from "./dao/MyDAO.js";
+
 import Charge from './services/stripe.mjs';
 import serve from "koa-static"; // CJS: require('koa-static')
 
@@ -25,7 +27,12 @@ app.use(bodyParser());
 const GC_RELEASE = "2023-07-16";
 // 
 const dao = new MainDAO(process.env.MONGO_URL);
-
+const myDao = new MyDAO({
+  host: 'appdojo.net',
+  user: 'appjedin_sensei',
+  database: 'appjedin_training',
+  password: 'Sensei2022!'
+})
 let ssn;
 const GC_STUDENTS = [];
 const GC_LEVELS = ['None', 'White', 'Yellow', 'Orange', 'Green', 'Blue', 'Purple', 'Brown 3rd', 'Brown 2nd', 'Brown 1st', 'Shodan', 'Nidan', 'Sandan'];
@@ -59,7 +66,12 @@ router.get("/key/:key/:val", async (ctx) => {
 router.get("/release", async (ctx) => {
    ctx.body=GC_RELEASE;
 });
-
+router.get("/mytest/:msg", async (ctx) => {
+    const msg = ctx.params.msg;
+    //const users = await myDao.query("SELECT * FROM users");
+    const resp = await myDao.execute("call usp_logger(?);",[msg])
+    ctx.body = resp;
+})
 router.get("/hello/:name", async (ctx) => {
     ctx.body = "Hello " + ctx.params.name;
 });
@@ -69,8 +81,7 @@ router.get("/user", async (ctx) => {
 });
 router.get('/login', (ctx) => {
   const msg = ctx.query.msg;
-  const form =
-    `
+  const form = `
     <html><head><title>login</title></head><body>
    <h1>Login Page: </h1><p>${msg}</p>
    <form method="POST" action="login">
@@ -97,7 +108,7 @@ router.get("/success/:id/:token", async (ctx) => {
   console.log("SUCCESS ", id);
   try {
 
-    const obj = { status: 1, message: "paid", id: id }
+    const obj = { status: 1, message: "Thank you for your donation!", id: id }
       dao.updateFromStripe(id, 1);
 
     console.log("success:", obj);

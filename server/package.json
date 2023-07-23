@@ -16,6 +16,7 @@
     "koa-static": "^5.0.0",
     "mongodb": "^4.9.0",
     "mongoose": "^7.3.4",
+    "request-promise": "^4.2.6",
     "stripe": "^8.222.0",
     "sync-mysql": "^3.0.1"
   },

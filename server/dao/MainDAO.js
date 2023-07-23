@@ -23,8 +23,8 @@ module.exports =
                 roleid: Number,
                 donations: Array
             }, { collection: 'users' });
-
             this.UserData = mongoose.model('UserData', this.userDataSchema);
+            
             this.donationSchema = new Schema({
                 id: String,
                 userId: String,
