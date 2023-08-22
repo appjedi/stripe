@@ -3,7 +3,7 @@ const {ObjectId} = require('mongodb'); // or ObjectID
 module.exports =
     class MainDAO {
         constructor(url) {
-            this.url = this.getConnURL();
+            this.url = url; //this.getConnURL();
             this.init(this.url);
         }
         init = async (url) => {
@@ -152,14 +152,17 @@ module.exports =
             }
         }
         dbAuth = async (username, password) => {
-            const data = await this.UserData.find({ email: username });
+            const data = await this.UserData.find({ username: username });
             if (!data) {
                 return { status: -1, message: "Not Found" }
             }
             if (data[0].password !== password) {
                 return { status: -2, message: "Invalid password" }
             }
-            const user = { name: data[0].email, status: 1, message: "Authenticated", userId: data[0]._id };
+            console.log("dbAuth::", data[0]);
+
+            const user = { username: data[0].username, status: 1, message: "Authenticated", userId: data[0]._id };
+            console.log("returning user", user);
             return user;
 
         }

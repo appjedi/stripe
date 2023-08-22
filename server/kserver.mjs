@@ -24,9 +24,9 @@ app.keys = ['Shh, its a secret!'];
 app.use(session(app));
 app.use(json());
 app.use(bodyParser());
-const GC_RELEASE = "2023-07-16";
+const GC_RELEASE = "2023-08-16";
 // 
-const dao = new MainDAO(process.env.MONGO_URL);
+const dao = new MainDAO(process.env.MONGO_DEV_URL);
 const myConn = JSON.parse(process.env.MYSQL_DEV);
 
 const myDao = new MyDAO(myConn)
@@ -56,12 +56,12 @@ router.get("/", async (ctx) => {
 router.get("/key/:key/:val", async (ctx) => {
   const key = ctx.params.key;
   const val = ctx.params.val;
-  const rv = await dao.addKeyValue(key, val);
-  // const val = await dao.getKeyValue(key)
+  //const rv = await dao.addKeyValue(key, val);
+  const rv = await dao.getKeyValue(key)
   ctx.body = rv;
 });
-router.get("/release", async (ctx) => {
-  ctx.body = GC_RELEASE;
+router.get("/health", async (ctx) => {
+  ctx.body = { status: 200, release: GC_RELEASE, message: "I'm alive" };
 });
 router.get("/mytest/:msg", async (ctx) => {
   const msg = ctx.params.msg;
@@ -119,7 +119,7 @@ router.get("/cancel/:id/:token", async (ctx) => {
   }
 });
 router.get('/login', (ctx) => {
-  const msg = ctx.query.msg;
+  const msg = ctx.query.msg||"enter your credentials";
   const form = `
     <html><head><title>login</title></head><body>
    <h1>Login Page: </h1><p>${msg}</p>

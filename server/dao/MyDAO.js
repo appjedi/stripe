@@ -18,7 +18,7 @@ class MyDAO
             connection.password,
             {
                 host: connection.host,
-                dialect: 'mysql'
+                dialect: connection.dialect
             }
         );
         sequelize.authenticate().then(() => {
