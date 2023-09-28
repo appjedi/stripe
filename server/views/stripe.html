@@ -35,7 +35,7 @@
       const button = document.querySelector("button");
       const SERVER_ROOT_URL = "<%=serverURL%>";
       button.addEventListener("click", async () => {
-        console.log("client checkout");
+        console.log("client checkout from view");
 
         const item = {
           itemId: 1,
@@ -46,7 +46,7 @@
         };
 
         console.log("Sending:", item);
-        const resp = await fetch(SERVER_ROOT_URL + "charge", {
+        const resp = await fetch(SERVER_ROOT_URL + "/charge", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

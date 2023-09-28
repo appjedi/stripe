@@ -9,7 +9,7 @@ module.exports =
         init = async (url) => {
             console.log("MONGO URL", url);
             console.log("MainDAO.init.process.env.MONGO_URL", process.env.MONGO_URL);
-
+            url = process.env.MONGO_URL;
             mongoose.connect(url ? url : "");
 
             const Schema = mongoose.Schema;
@@ -29,7 +29,8 @@ module.exports =
                 id: String,
                 userId: String,
                 email: String,
-                fullName:String,
+                fullName: String,
+                itemId:Number,
                 amount: Number,
                 status: Number,
                 paid: String,
@@ -48,7 +49,9 @@ module.exports =
             return rv;
         }
         getKeyValue = async (key) => {
+            console.log ("getKeyValue:", key)
             const doc = await this.KeyValueData.find({ key: key })
+            console.log("DOC",doc);
             return doc[0].value;
         }
         getConnURL() {

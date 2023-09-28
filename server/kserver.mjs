@@ -8,7 +8,7 @@ import bodyParser from 'koa-bodyparser';
 import path from 'path';
 import session from 'koa-session';
 import MainDAO from "./dao/MainDAO.js";
-import MyDAO from "./dao/MyDAO.js";
+//import MyDAO from "./dao/MyDAO.js";
 
 import Charge from './services/stripe.mjs';
 import serve from "koa-static"; // CJS: require('koa-static')
@@ -29,7 +29,7 @@ const GC_RELEASE = "2023-08-16";
 const dao = new MainDAO(process.env.MONGO_DEV_URL);
 const myConn = JSON.parse(process.env.MYSQL_DEV);
 
-const myDao = new MyDAO(myConn)
+//const myDao = new MyDAO(myConn)
 let ssn;
 const GC_STUDENTS = [];
 const GC_LEVELS = ['None', 'White', 'Yellow', 'Orange', 'Green', 'Blue', 'Purple', 'Brown 3rd', 'Brown 2nd', 'Brown 1st', 'Shodan', 'Nidan', 'Sandan'];
@@ -52,12 +52,21 @@ app.use(router.routes()).use(router.allowedMethods());
 router.get("/", async (ctx) => {
   await ctx.render('stripe', { serverURL: GC_SERVER_URL });
 });
+router.get("/donate", async (ctx) => {
+  await ctx.render('stripe', { serverURL: GC_SERVER_URL });
+});
 //  
 router.get("/key/:key/:val", async (ctx) => {
   const key = ctx.params.key;
   const val = ctx.params.val;
-  //const rv = await dao.addKeyValue(key, val);
-  const rv = await dao.getKeyValue(key)
+  let rv;
+  if (val === "get")
+  {
+      rv = await dao.getKeyValue(key)
+  } else {
+      rv = await dao.addKeyValue(key, val);
+  }
+  
   ctx.body = rv;
 });
 router.get("/health", async (ctx) => {
@@ -79,7 +88,7 @@ router.get("/user", async (ctx) => {
 
 router.post("/charge", async (ctx) => {
   try {
-    console.log("BODY:", ctx.request.body);
+    console.log("charge:", ctx.request.body);
     const resp = await Charge.charge(dao, ctx.request.body.email, ctx.request.body.fullName, ctx.request.body.amount);
     ctx.body = resp;
   } catch (e) {

@@ -1,7 +1,7 @@
-const button = document.querySelector("button");
+const button = document.getElementById("checkoutButton");
 const SERVER_ROOT_URL = "http://localhost:3000/";
-button.addEventListener("click", async() => {
-  console.log("client checkout");
+button.addEventListener("click",async () => {
+  console.log("client checkout!!!!");
   const test = [
     { id: 1, name: "adam" }, { id: 2, name: "Bob" }
   ]
@@ -13,9 +13,10 @@ button.addEventListener("click", async() => {
     amount: $("#amount").val(),
     test: JSON.stringify(test)
   };
+  const url = SERVER_ROOT_URL + "charge";
+  console.log("Sending:", item, " to ", url);
 
-  console.log("Sending:", item);
-  const resp = await fetch(SERVER_ROOT_URL + "charge", {
+  const resp = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
