@@ -8,15 +8,17 @@ import MainDAO from "../dao/MainDAO.js";
 //const stripe (process.env.STRIPE_PRIVATE_KEY);
 
 class Charge {
-    static charge = async (dao, email, fullName, amount) => {
+    static charge = async (dao, id, amount, description) => {
         try {
+            console.log("CHARGE:", id, amount, description);
             //const dao = new MainDAO();
             const key = await dao.getKeyValue("PAYMENT_API_KEY");
             const reponseUrl = await dao.getKeyValue("PAYMENT_RESPONSE_URL");
             const stripe = new Stripe(key);
 
             console.log("DB.STRIPE_PRIVATE_KEY", key, "reponseUrl", reponseUrl);
-            const description = "Donation"
+                       // const resp = await dao.addPurchase(cart);
+           
             const test = [{
                 "price_data": {
                     "currency": "usd", "product_data":
@@ -26,11 +28,10 @@ class Charge {
                 "quantity": 1
             }];
 
-            const id = await dao.addDonation(email, fullName, amount);
 
             const lineItems = [
                 {
-                    price_data: { currency: 'usd', product_data: { name: "donation" }, unit_amount: amount * 100 },
+                    price_data: { currency: 'usd', product_data: { name: "purchase" }, unit_amount: amount * 100 },
                     quantity: 1
                 }
             ];

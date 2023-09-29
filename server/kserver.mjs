@@ -7,10 +7,11 @@ import render from 'koa-ejs';
 import bodyParser from 'koa-bodyparser';
 import path from 'path';
 import session from 'koa-session';
-import MainDAO from "./dao/MainDAO.js";
+//import MainDAO from "./dao/MainDAO.js";
 //import MyDAO from "./dao/MyDAO.js";
 
 import Charge from './services/stripe.mjs';
+import Service from './services/service.mjs';
 import serve from "koa-static"; // CJS: require('koa-static')
 
 // 
@@ -26,8 +27,9 @@ app.use(json());
 app.use(bodyParser());
 const GC_RELEASE = "2023-08-16";
 // 
-const dao = new MainDAO(process.env.MONGO_DEV_URL);
-const myConn = JSON.parse(process.env.MYSQL_DEV);
+//const dao = new MainDAO(process.env.MONGO_DEV_URL);
+//const myConn = JSON.parse(process.env.MYSQL_DEV);
+const service = new Service(process.env.MONGO_DEV_URL);
 
 //const myDao = new MyDAO(myConn)
 let ssn;
@@ -62,9 +64,9 @@ router.get("/key/:key/:val", async (ctx) => {
   let rv;
   if (val === "get")
   {
-      rv = await dao.getKeyValue(key)
+      rv = await service.getKeyValue(key)
   } else {
-      rv = await dao.addKeyValue(key, val);
+      rv = await service.addKeyValue(key, val);
   }
   
   ctx.body = rv;
@@ -75,7 +77,7 @@ router.get("/health", async (ctx) => {
 router.get("/mytest/:msg", async (ctx) => {
   const msg = ctx.params.msg;
   //const users = await myDao.query("SELECT * FROM users");
-  const resp = await myDao.execute("call usp_logger(?);", [msg])
+  const resp = await service.execute("call usp_logger(?);", [msg])
   ctx.body = resp;
 })
 router.get("/hello/:name", async (ctx) => {
@@ -85,11 +87,30 @@ router.get("/hello/:name", async (ctx) => {
 router.get("/user", async (ctx) => {
   ctx.body = ctx.session.user;
 });
+router.get("/products", async (ctx) => {
 
+  const products = await service.getProducts();
+  console.log("products:", products);
+  await ctx.render('products', {
+    products: products,
+    serverURL:GC_SERVER_URL
+    });
+});
+router.post("/api/checkout", async (ctx) => {
+  console.log("checkout:", ctx.request.body);
+  const resp = await service.purchase(ctx.request.body);
+  ctx.body = resp;
+});
+router.get("/api/products", async (ctx) => {
+  const products = await service.getProducts();
+  console.log("products:", products);
+  ctx.body = products;
+});
 router.post("/charge", async (ctx) => {
   try {
     console.log("charge:", ctx.request.body);
-    const resp = await Charge.charge(dao, ctx.request.body.email, ctx.request.body.fullName, ctx.request.body.amount);
+    const resp = await service.charge(ctx.request.body.email, ctx.request.body.fullName, ctx.request.body.amount);
+    // charge (email,fullName,email)
     ctx.body = resp;
   } catch (e) {
     console.log("Post error: ", e);
@@ -102,7 +123,7 @@ router.get("/success/:id/:token", async (ctx) => {
   try {
 
     const obj = { status: 1, message: "Thank you for your donation!", id: id }
-    dao.updateFromStripe(id, 1);
+    service.updateFromStripe(id, 1);
 
     console.log("success:", obj);
 
@@ -117,7 +138,7 @@ router.get("/cancel/:id/:token", async (ctx) => {
   const id = ctx.params.id;
   try {
     const obj = { status: 1, message: "paid", id: id }
-    dao.updateFromStripe(id, -1);
+    service.updateFromStripe(id, -1);
 
     console.log("cancel:", obj);
 
@@ -145,7 +166,7 @@ router.post('/login', async (ctx) => {
   const username = ctx.request.body.username;
   const password = ctx.request.body.password;
   console.log("/login:", username);
-  const auth = await dao.dbAuth(username, password);
+  const auth = await service.login(username, password);
   console.log("Authenticated!", auth);
   if (auth && auth.id > 0) {
     console.log("Authenticated!", auth);

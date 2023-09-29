@@ -37,7 +37,18 @@ module.exports =
                 posted: String
             }, { collection: 'donations' });
             this.DonationData = mongoose.model('DonationData', this.donationSchema);
-
+            this.purchaseSchema = new Schema({
+                id: String,
+                userId: String,
+                email: String,
+                fullName: String,
+                items: Array,
+                amount: Number,
+                status: Number,
+                paid: String,
+                posted: String
+            }, { collection: 'purchases' });
+            this.PurchaseData = mongoose.model('PurchaseData', this.purchaseSchema);
             this.keyValueSchema = new Schema({
                 key: String,
                 value: String
@@ -49,19 +60,60 @@ module.exports =
             return rv;
         }
         getKeyValue = async (key) => {
-            console.log ("getKeyValue:", key)
-            const doc = await this.KeyValueData.find({ key: key })
-            console.log("DOC",doc);
-            return doc[0].value;
+            try {
+                const query = key === "all"? { }: { key: key };
+                console.log("getKeyValue:", key, query)
+                const doc = await this.KeyValueData.find(query)
+                console.log("DOC", doc);
+                return doc[0].value;
+            } catch (e) {
+                console.log("getKeyValue.error", e);
+            }
         }
         getConnURL() {
             console.log("getConnURL.process.env.MONGO_URL", process.env.MONGO_URL);
             return process.env.MONGO_URL || "mongodb+srv://appuser:AppData2022@cluster0.aga82.mongodb.net/FauziaA"
             //return process.env.MONGO_URL || "mongodb://localhost:27017/FauziaA";
         }
+        addPurchase = async (cart) => {
+            try {
+               // const user = await this.getUserByEmail(cart.email);
+                console.log("addDonation.user:", cart.email);
+                const userId = 0; //(user ? user.userId : "");
+                let amount = 0;
+                for (let item of cart.cart)
+                {
+                    amount += (item.price * item.qty);    
+                }
+                const id = new Date().getTime();
+                const item = {
+                    id: id,
+                    userId: userId,
+                    email: cart.email,
+                    fullName: cart.fullName,
+                    items:cart.cart,
+                    amount: amount,
+                    status: 0,
+                    posted: new Date(),
+                    paid: null
+                }
+
+                console.log("purchase:", item)
+                const resp = await this.PurchaseData.create(item);
+                console.log("purchase.RESP:", resp);
+              //  const donations = await this.getDonations(cart.email);
+                //await this.UserData.findOneAndUpdate({ email: cart.email }, { purchase: item });
+                return { status: 1, id: id, amount: amount, message:"added" };
+            } catch (e) {
+                console.log(e);
+                return { staus: -1, id: 0, amount: 0, message:"error" };
+            }
+            return 1;
+        }
         updateFromStripe = async (id, status) => {
             const paid = new Date().getTime()
-            await this.DonationData.findOneAndUpdate({ id: id }, { status: status, paid: paid });
+            //await this.DonationData.findOneAndUpdate({ id: id }, { status: status, paid: paid });
+            await this.PurchaseData.findOneAndUpdate({ id: id }, { status: status, paid: paid });
 
             console.log("updateFromStripe.ID:", id);
             return "updated";
