@@ -1,7 +1,9 @@
 // source: https://www.youtube.com/watch?v=z84uTk5zmak
 import dotenv from 'dotenv'
-import Koa from 'koa';
-import KoaRouter from 'koa-router';
+import Koa,{ Context,DefaultState } from 'koa';
+//import KoaRouter from 'koa-router';
+import * as Router from "koa-router";
+
 import json from 'koa-json';
 import render from 'koa-ejs';
 import bodyParser from 'koa-bodyparser';
@@ -18,13 +20,13 @@ import serve from "koa-static"; // CJS: require('koa-static')
 dotenv.config();
 
 const app = new Koa();
-const router = new KoaRouter();
+const router = new Router();
 const PORT = 3000;
 //app.use(session());
 app.keys = ['Shh, its a secret!'];
-app.use(session(app));
-app.use(json());
-app.use(bodyParser());
+app.use(session(null,app));
+app.use(json(null));
+app.use(bodyParser(null));
 const GC_RELEASE = "2023-08-16";
 // 
 //const dao = new MainDAO(process.env.MONGO_DEV_URL);
@@ -49,9 +51,10 @@ render(app, {
   cache: false,
   debug: false
 });
-app.use(router.routes()).use(router.allowedMethods());
+app.use(router.routes);
+//.use(router.allowedMethods(null));
 
-router.get("/", async (ctx) => {
+router.get("/", async (ctx: Context, next) => {
   await ctx.render('stripe', { serverURL: GC_SERVER_URL });
 });
 router.get("/donate", async (ctx) => {
@@ -130,7 +133,7 @@ router.get("/success/:id/:token", async (ctx) => {
     await ctx.render('confirm', { obj: obj })
   } catch (e) {
     const obj = { status: -1, message: "error", id: id }
-    res.send(obj);
+    ctx.body=obj;
   }
 
 });
@@ -145,7 +148,7 @@ router.get("/cancel/:id/:token", async (ctx) => {
     ctx.render("confirm", { obj: obj })
   } catch (e) {
     const obj = { status: -1, message: "error", id: id }
-    res.send(obj);
+    ctx.body=obj;
   }
 });
 router.get('/login', (ctx) => {
@@ -162,15 +165,16 @@ router.get('/login', (ctx) => {
   ctx.body = form;
 
 });
-router.post('/login', async (ctx) => {
-  const username = ctx.request.body.username;
-  const password = ctx.request.body.password;
+router.post('/login', async (ctx: Context) => {
+  const data = ctx.request.body ?? {username:"missing", password:"missing"};
+  const username = data["username"];
+  const password = data["password"];
   console.log("/login:", username);
   const auth = await service.login(username, password);
   console.log("Authenticated!", auth);
-  if (auth && auth.id > 0) {
+  if (auth && auth["id"] > 0) {
     console.log("Authenticated!", auth);
-    const obj = { auth: true, userId: auth.id, userName: auth.username, roleId: auth.role_id };
+    const obj = { auth: true, userId: auth["id"], userName: auth["username"], roleId: auth["role_id"] };
     console.log("AUTH:", obj);
     ssn = ctx.session;
 
