@@ -2,7 +2,7 @@ import mongoose  from 'mongoose';
 import {ObjectId} from 'mongodb'; // or ObjectID 
 import { Schema } from 'mongoose';
 import { model } from 'mongoose';
-import { IUser, IKeyValue, IPurchase, IDonation, ICart, IItem,IReceipt } from './Interaces';
+import { IUser, IKeyValue, IPurchase, IDonation, ICart, IItem,IReceipt } from './Interfaces';
 
 class MainDAO {
     private url: string;
@@ -102,11 +102,12 @@ class MainDAO {
         addPurchase = async (cart:ICart):Promise<Object> => {
             try {
                // const user = await this.getUserByEmail(cart.email);
-                console.log("addDonation.user:", cart.email);
+                console.log("addPurchase.user:", cart);
                 const userId = 0; //(user ? user.userId : "");
                 let amount:number = 0;
                 for (let item of cart.cart)
                 {
+                    console.log("ADD ITEM:", item);
                     amount += (item.price * item.quantity);    
                 }
                 const id = new Date().getTime();
@@ -129,7 +130,7 @@ class MainDAO {
                 //await this.UserData.findOneAndUpdate({ email: cart.email }, { purchase: item });
                 return {  productId: id, amount: new Number(amount) };
             } catch (e) {
-                console.log(e);
+                console.log("addPurchase-Error:",e);
                 return { staus: -1, productId: 0, amount: 0, message:"error" };
             }
             return 1;

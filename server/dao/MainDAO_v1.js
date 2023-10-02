@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb'); // or ObjectID 
-import { KeyValue } from "./Interaces";
+//import { KeyValue } from "./Interfaces";
 module.exports =
     class MainDAO {
         constructor(url) {
@@ -80,7 +80,7 @@ module.exports =
         addPurchase = async (cart) => {
             try {
                // const user = await this.getUserByEmail(cart.email);
-                console.log("addDonation.user:", cart.email);
+                console.log("addPurchaseJS.user:", cart.email);
                 const userId = 0; //(user ? user.userId : "");
                 let amount = 0;
                 for (let item of cart.cart)

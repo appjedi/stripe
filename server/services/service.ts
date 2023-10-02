@@ -1,8 +1,8 @@
 import MainDAO from "../dao/MainDAO";
 import MyDAO from "../dao/MyDAO";
-import Charge from "./stripe.mjs";
+import Charge from "./stripe";
 import nodeMailer from "nodemailer";
-import { IMailAuth, ICart, IItem, IPurchase } from "../dao/Interaces";
+import { IMailAuth, ICart, IItem, IPurchase } from "../dao/Interfaces";
 const GC_PRODUCTS = [
     { id: 1, name: "Patch", description: "Patch", price: 15 },
     { id: 2, name: "Gi with Patch", description: "Gi with Patch", price: 30 },
@@ -68,6 +68,9 @@ class Service {
             return "error";
         }
     }
+    addKeyValue = async (key: string, value: string) => {
+        
+    }
     getKeyValues = async (): Promise<Array<KeyValue>> => {
         try {
             //const rows: Array<KeyValue>=new Array<KeyValue>();
@@ -94,7 +97,7 @@ class Service {
                 return { status: -1, message: "error" }
         }
     }
-    saveVideo = async (data) => {
+    saveVideo = async (data:Object) => {
         try {
             console.log("console", data);
             //  usp_video_save (0,'test.com', '2023-08-01','TITLE','source',1,1,1,1,1,1,1)
@@ -109,12 +112,10 @@ class Service {
             return { status: -1, message: "error" }
         }
     }
-    execute = async (query) => {
+    execute = async (query:string, values:Array<Object>) => {
             
     }
-    charge = async (email, fullName, amount) => {
-        
-    }
+
     getUsers = async (id) => {
         const users = await this.mainDAO.getUsers();
         //const suers = await this.dao.query("SELECT * FROM view_users");
@@ -134,7 +135,34 @@ class Service {
             return null;
         }
     };
-    purchase = async (cart:ICart):Promise<Object> => {
+    purchase = async (data: Object): Promise<Object> => {
+        const cart:ICart={
+            customerId: data['customerId'],
+            email: data['email'],
+            fullName: data['fullName'],
+            cart: data['cart']
+        }
+        const resp:Object = await this.mainDAO.addPurchase(cart);
+        console.log("MainDAO.RESP", resp);
+        const resp2 = await Charge.charge(this.mainDAO, resp["productId"], resp["amount"],"purchase");//dao, id, amount, name
+        console.log("STRIPE:", resp2);
+        return resp2;
+    }
+    charge = async (email: string, fullName: string, amount: number) => {
+        const item:IItem = {    
+            productId: 1,
+            quantity: 1,
+            price: amount    
+        }
+        console.log("service.charge:", item);
+        const items: Array<IItem>= [item];
+
+        const cart:ICart={
+            customerId:1,
+            email: email,
+            fullName: fullName,
+            cart: items
+        }
         const resp:Object = await this.mainDAO.addPurchase(cart);
         console.log("MainDAO.RESP", resp);
         const resp2 = await Charge.charge(this.mainDAO, resp["productId"], resp["amount"],"purchase");//dao, id, amount, name

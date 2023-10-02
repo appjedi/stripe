@@ -1,0 +1,222 @@
+
+> server@1.0.0 start
+> ts-node --esm kserver.ts
+
+mongoLink: mongodb://localhost:27017/wkk
+MONGO URL mongodb://localhost:27017/wkk
+MainDAO.init.process.env.MONGO_URL mongodb+srv://appuser:AppData2022@cluster0.aga82.mongodb.net/wkk
+init
+DIRNAME /Users/roberttimlin/Documents/GitHub/stripe/server
+TS-listening on port: 3000
+DOC [
+  {
+    _id: new ObjectId("64b4438e1fe01ee3e92b9d0e"),
+    key: 'PAYMENT_API_KEY',
+    value: 'sk_test_WGocjwW9Qm4LbHyK2fFmnBDa',
+    __v: 0,
+    groupId: '2'
+  },
+  {
+    _id: new ObjectId("64b443db1fe01ee3e92b9d10"),
+    key: 'PAYMENT_RESPONSE_URL',
+    value: 'http://appdojo.net:3000',
+    __v: 0,
+    groupId: '2'
+  },
+  {
+    _id: new ObjectId("64e77bdd4cb4975c2682b64d"),
+    key: 'WKK_PAYMENT_RESPONSE_URL',
+    value: 'http://wadokikai.org:3000',
+    __v: 0
+  },
+  {
+    _id: new ObjectId("64f5f5845ea83400b5f41df6"),
+    key: 'MAIL_OPTIONS'
+  },
+  {
+    _id: new ObjectId("64f5f9ea5ea83400b5f41df7"),
+    key: 'PAYMENT_API',
+    values: {
+      API_KEY: 'sk_test_WGocjwW9Qm4LbHyK2fFmnBDa',
+      RESPONSE_URL: 'https://wadokikai.org/3000'
+    }
+  },
+  { _id: new ObjectId("64f60a5f5ea83400b5f41df9"), key: 'MySQL_JSON' }
+]
+keyValues [
+  {
+    _id: new ObjectId("64b4438e1fe01ee3e92b9d0e"),
+    key: 'PAYMENT_API_KEY',
+    value: 'sk_test_WGocjwW9Qm4LbHyK2fFmnBDa',
+    __v: 0,
+    groupId: '2'
+  },
+  {
+    _id: new ObjectId("64b443db1fe01ee3e92b9d10"),
+    key: 'PAYMENT_RESPONSE_URL',
+    value: 'http://appdojo.net:3000',
+    __v: 0,
+    groupId: '2'
+  },
+  {
+    _id: new ObjectId("64e77bdd4cb4975c2682b64d"),
+    key: 'WKK_PAYMENT_RESPONSE_URL',
+    value: 'http://wadokikai.org:3000',
+    __v: 0
+  },
+  {
+    _id: new ObjectId("64f5f5845ea83400b5f41df6"),
+    key: 'MAIL_OPTIONS'
+  },
+  {
+    _id: new ObjectId("64f5f9ea5ea83400b5f41df7"),
+    key: 'PAYMENT_API',
+    values: {
+      API_KEY: 'sk_test_WGocjwW9Qm4LbHyK2fFmnBDa',
+      RESPONSE_URL: 'https://wadokikai.org/3000'
+    }
+  },
+  { _id: new ObjectId("64f60a5f5ea83400b5f41df9"), key: 'MySQL_JSON' }
+]
+myConn undefined
+Init error: SyntaxError: Unexpected token u in JSON at position 0
+    at JSON.parse (<anonymous>)
+    at Service.<anonymous> (/Users/roberttimlin/Documents/GitHub/stripe/server/services/service.ts:41:39)
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/roberttimlin/Documents/GitHub/stripe/server/services/service.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+server.charge: 100 {
+  itemId: 1,
+  cliendId: 1,
+  fullName: 'Robert Timlin',
+  email: 'bob@timlin.net',
+  amount: '100'
+}
+service.charge: { productId: 1, quantity: 1, price: 100 }
+addPurchase.user: {
+  customerId: 1,
+  email: 'bob@timlin.net',
+  fullName: 'Robert Timlin',
+  cart: [ { productId: 1, quantity: 1, price: 100 } ]
+}
+ADD ITEM: { productId: 1, quantity: 1, price: 100 }
+purchase: {
+  id: 1696268893801,
+  userId: 0,
+  email: 'bob@timlin.net',
+  fullName: 'Robert Timlin',
+  items: [ { productId: 1, quantity: 1, price: 100 } ],
+  amount: 100,
+  status: 0,
+  posted: 2023-10-02T17:48:13.801Z,
+  paid: null
+}
+purchase.RESP: {
+  id: '1696268893801',
+  userId: '0',
+  email: 'bob@timlin.net',
+  fullName: 'Robert Timlin',
+  items: [ { productId: 1, quantity: 1, price: 100 } ],
+  amount: 100,
+  status: 0,
+  paid: null,
+  posted: 'Mon Oct 02 2023 10:48:13 GMT-0700 (Pacific Daylight Time)',
+  _id: new ObjectId("651b025d41350082f6cd0bda"),
+  __v: 0
+}
+MainDAO.RESP { productId: 1696268893801, amount: [Number: 100] }
+CHARGE: 1696268893801 [Number: 100] purchase
+getKeyValue: PAYMENT_API_KEY { key: 'PAYMENT_API_KEY' }
+DOC [
+  {
+    _id: new ObjectId("64b4438e1fe01ee3e92b9d0e"),
+    key: 'PAYMENT_API_KEY',
+    value: 'sk_test_WGocjwW9Qm4LbHyK2fFmnBDa',
+    __v: 0,
+    groupId: '2'
+  }
+]
+getKeyValue: PAYMENT_RESPONSE_URL { key: 'PAYMENT_RESPONSE_URL' }
+DOC [
+  {
+    _id: new ObjectId("64b443db1fe01ee3e92b9d10"),
+    key: 'PAYMENT_RESPONSE_URL',
+    value: 'http://appdojo.net:3000',
+    __v: 0,
+    groupId: '2'
+  }
+]
+DB.STRIPE_PRIVATE_KEY sk_test_WGocjwW9Qm4LbHyK2fFmnBDa reponseUrl http://appdojo.net:3000
+URL: https://appdojo.net:3000//success/1696268893801/2023
+STRIPE SESSION {
+  id: 'cs_test_a18rco2CK2tbPJZ68arQcq92l5pm85gmW4BrJ6CWKHYdzUp9z5lIPYWcT9',
+  object: 'checkout.session',
+  after_expiration: null,
+  allow_promotion_codes: null,
+  amount_subtotal: 10000,
+  amount_total: 10000,
+  automatic_tax: { enabled: false, status: null },
+  billing_address_collection: null,
+  cancel_url: 'http://appdojo.net:3000/cancel/1696268893801/2023',
+  client_reference_id: '1696268893801',
+  consent: null,
+  consent_collection: null,
+  created: 1696268896,
+  currency: 'usd',
+  currency_conversion: null,
+  custom_fields: [],
+  custom_text: {
+    shipping_address: null,
+    submit: null,
+    terms_of_service_acceptance: null
+  },
+  customer: null,
+  customer_creation: 'always',
+  customer_details: null,
+  customer_email: null,
+  expires_at: 1696355295,
+  invoice: null,
+  invoice_creation: {
+    enabled: false,
+    invoice_data: {
+      account_tax_ids: null,
+      custom_fields: null,
+      description: null,
+      footer: null,
+      metadata: {},
+      rendering_options: null
+    }
+  },
+  livemode: false,
+  locale: null,
+  metadata: {},
+  mode: 'payment',
+  payment_intent: 'pi_3NwqE7BHmvrXLwFd0nAIL21D',
+  payment_link: null,
+  payment_method_collection: 'always',
+  payment_method_configuration_details: null,
+  payment_method_options: {},
+  payment_method_types: [ 'card' ],
+  payment_status: 'unpaid',
+  phone_number_collection: { enabled: false },
+  recovered_from: null,
+  setup_intent: null,
+  shipping: null,
+  shipping_address_collection: null,
+  shipping_options: [],
+  shipping_rate: null,
+  status: 'open',
+  submit_type: null,
+  subscription: null,
+  success_url: 'http://appdojo.net:3000/success/1696268893801/2023',
+  total_details: { amount_discount: 0, amount_shipping: 0, amount_tax: 0 },
+  url: 'https://checkout.stripe.com/c/pay/cs_test_a18rco2CK2tbPJZ68arQcq92l5pm85gmW4BrJ6CWKHYdzUp9z5lIPYWcT9#fidkdWxOYHwnPyd1blpxYHZxWnBDanBBd3V2PG5HMGRoZ1Y3R2RwTmF3RCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl'
+} URL: https://checkout.stripe.com/c/pay/cs_test_a18rco2CK2tbPJZ68arQcq92l5pm85gmW4BrJ6CWKHYdzUp9z5lIPYWcT9#fidkdWxOYHwnPyd1blpxYHZxWnBDanBBd3V2PG5HMGRoZ1Y3R2RwTmF3RCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl
+STRIPE: {
+  status: 200,
+  url: 'https://checkout.stripe.com/c/pay/cs_test_a18rco2CK2tbPJZ68arQcq92l5pm85gmW4BrJ6CWKHYdzUp9z5lIPYWcT9#fidkdWxOYHwnPyd1blpxYHZxWnBDanBBd3V2PG5HMGRoZ1Y3R2RwTmF3RCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl'
+}
+RESP {
+  status: 200,
+  url: 'https://checkout.stripe.com/c/pay/cs_test_a18rco2CK2tbPJZ68arQcq92l5pm85gmW4BrJ6CWKHYdzUp9z5lIPYWcT9#fidkdWxOYHwnPyd1blpxYHZxWnBDanBBd3V2PG5HMGRoZ1Y3R2RwTmF3RCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl'
+}

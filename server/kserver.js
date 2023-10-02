@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import Koa from 'koa';
 import { Context,DefaultState } from 'koa';
 //import KoaRouter from 'koa-router';
-import Router from "koa-router";
+import * as Router from "koa-router";
 
 import json from 'koa-json';
 import render from 'koa-ejs';
@@ -43,7 +43,7 @@ const GC_MONGO_DB_NAME = "wkk";
 
 console.log("DIRNAME", path.resolve());
 const GC_DIRNAME = path.resolve();
-//const __dirname = GC_DIRNAME + "/";
+const __dirname = GC_DIRNAME + "/";
 const GC_SERVER_URL = process.env.SERVER_URL;
 render(app, {
   root: path.join(__dirname, 'views'),
@@ -52,7 +52,7 @@ render(app, {
   cache: false,
   debug: false
 });
-app.use(router.routes());
+app.use(router.routes);
 //.use(router.allowedMethods(null));
 
 router.get("/", async (ctx: Context, next) => {
@@ -62,7 +62,7 @@ router.get("/donate", async (ctx:Context) => {
   await ctx.render('stripe', { serverURL: GC_SERVER_URL });
 });
 //  
-router.get("/key/:key/:val", async (ctx:Context) => {
+router.get("/key/:key/:val", async (ctx) => {
   const key = ctx.params.key;
   const val = ctx.params.val;
   let rv;
@@ -117,6 +117,7 @@ router.get("/api/products", async (ctx:Context) => {
 });
 router.post("/charge", async (ctx:Context) => {
   try {
+    console.log("charge:", ctx.request.body);
     if (!ctx.request.body)
     {
       ctx.body = {
@@ -124,14 +125,9 @@ router.post("/charge", async (ctx:Context) => {
       };
       return;
     }
-    const amt = parseInt(ctx.request.body['amount']);
-
-    const data = ctx.request.body ?? { email: "", fullName: "", amount: amt };
-    console.log("server.charge:",amt, data);
-
-    const resp = await service.charge(data["email"], ctx.request.body["fullName"], amt);
+    const data = ctx.request.body ?? {email:"",fullName:"",amount:0};
+    const resp = await service.charge(data["email"], ctx.request.body["fullName"], ctx.request.body["amount"]);
     // charge (email,fullName,email)
-    console.log("RESP", resp);
     ctx.body = resp;
   } catch (e) {
     console.log("Post error: ", e);
@@ -208,7 +204,6 @@ router.post('/login', async (ctx: Context) => {
 
 
 app.listen(PORT, () => {
-  console.log("TS-listening on port:", PORT);
+  console.log("listening on port:", PORT);
 })
 
-export {app}
