@@ -10,7 +10,7 @@ interface DBConnction {
   dialect: string;
 }
 let connection: DBConnction;
-class MyDAO {
+class SQLize {
   constructor(connObj) {
     connection = connObj;
     this.init();
@@ -51,4 +51,4 @@ class MyDAO {
     return results;
   };
 }
-export default MyDAO;
+export default SQLize;

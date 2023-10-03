@@ -138,7 +138,17 @@ router.post("/charge", async (ctx:Context) => {
     ctx.body = { status: -1, id: 0, message: "error posting...", errMsg: e };
   }
 });
-
+router.get("/email/:to/:subject/:message", async (ctx:Context) => {
+  const mailOptions = {
+    from: "",
+    to: ctx.params.to,
+    subject: ctx.params.subject,
+    html: ctx.params.message
+  };
+  const resp = await service.sendMail(mailOptions);
+  //service.sendMail(ctx.params.to, ctx.params.subject, ctx.params.message);
+  ctx.body = resp;
+});
 router.get("/success/:id/:token", async (ctx:Context) => {
   const id = ctx.params.id;
   console.log("SUCCESS ", id);
