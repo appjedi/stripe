@@ -2,14 +2,14 @@ import { Sequelize, DataTypes, QueryTypes } from "Sequelize";
 
 let sequelize: Sequelize;
 
-interface DBConnction {
+interface DBConnection {
   database: string;
   user: string;
   password: string;
   host: string;
   dialect: string;
 }
-let connection: DBConnction;
+let connection: DBConnection;
 class MyDAO {
   constructor(connObj) {
     connection = connObj;
