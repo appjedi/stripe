@@ -75,16 +75,16 @@ router.get("/key/:key/:val", async (ctx:Context) => {
   
   ctx.body = rv;
 });
-router.get("/health", async (ctx) => {
+router.get("/health", async (ctx:Context) => {
   ctx.body = { status: 200, release: GC_RELEASE, message: "I'm alive" };
 });
-router.get("/mytest/:msg", async (ctx) => {
+router.get("/mytest/:msg", async (ctx:Context) => {
   const msg = ctx.params.msg;
   //const users = await myDao.query("SELECT * FROM users");
   const resp = await service.execute("call usp_logger(?);", [msg])
   ctx.body = resp;
 })
-router.get("/hello/:name", async (ctx) => {
+router.get("/hello/:name", async (ctx:Context) => {
   ctx.body = "Hello " + ctx.params.name;
 });
 
@@ -138,6 +138,7 @@ router.post("/charge", async (ctx:Context) => {
     ctx.body = { status: -1, id: 0, message: "error posting...", errMsg: e };
   }
 });
+
 router.get("/success/:id/:token", async (ctx:Context) => {
   const id = ctx.params.id;
   console.log("SUCCESS ", id);

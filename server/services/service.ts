@@ -35,12 +35,14 @@ class Service {
             const keyValues = await this.getKeyValues();
             this.keyValues = keyValues;
             console.log("keyValues", this.keyValues);
-            const myConn:string = this.getKeyValueLocal("MySQL_JSON", ' { "host": "appdojo.net", "user": "appjedin_sensei", "database": "appjedin_training", "password": "Sensei2022!", "dialect": "mysql" }');
-
+            const myConn =  this.getKeyValueLocal("MySQL_CONN","");
+            //const myConn = ' { "host": "appdojo.net", "user": "appjedin_sensei", "database": "appjedin_training", "password": "Sensei2022!", "dialect": "mysql" }';
             console.log("myConn", myConn);
-            this.dao = new MyDAO(JSON.parse(myConn));
-            let temp:string = this.getKeyValueLocal("MAIL_OPTIONS","");
-            let obj = JSON.parse(temp);
+            this.dao = new MyDAO(JSON.parse(myConn+""));
+            let temp =  this.getKeyValueLocal("MAIL_OPTIONS","");
+            console.log("MAIL_OPTIONS:", temp);
+            let obj = JSON.parse(temp+"");
+            console.log("MAIL_OPTIONS:", JSON.stringify(obj));
             this.mailAuth =<IMailAuth> obj;
             console.log("mailAuth", this.mailAuth);
             //this.stripe = new Stripe();
@@ -75,6 +77,7 @@ class Service {
         try {
             //const rows: Array<KeyValue>=new Array<KeyValue>();
             const rows = await this.mainDAO.getKeyValues();
+            console.log("getKeyValues:", rows);
             return rows;
         } catch (e) {
             return [{ key: "ERR", value: "error" }];
