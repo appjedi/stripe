@@ -174,7 +174,7 @@ class Service {
     email: string,
     fullName: string,
     amount: number,
-    description: string
+    description: string=""
   ) => {
     const item: IItem = {
       productId: 1,

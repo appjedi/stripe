@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, QueryTypes } from "Sequelize";
+import { Sequelize, DataTypes, QueryTypes } from "sequelize";
 
 let sequelize: Sequelize;
 
