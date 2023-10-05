@@ -252,7 +252,7 @@ router.get("/students", async (ctx: Context) => {
   }
   const s = (await service.getStudents(0)) ?? [{ rank: 0, name: "" }];
 
-  console.log("STUDENTS:", s);
+  // console.log("STUDENTS:", s);
   s.sort((a, b) => {
     const diff = b.rank - a.rank;
     if (diff !== 0) {
