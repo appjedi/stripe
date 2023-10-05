@@ -1,7 +1,7 @@
 // source: https://www.youtube.com/watch?v=z84uTk5zmak
 import dotenv from 'dotenv'
 import Koa from 'koa';
-import { Context,DefaultState } from 'koa';
+import { Context, DefaultState } from 'koa';
 //import KoaRouter from 'koa-router';
 import * as Router from "koa-router";
 
@@ -10,14 +10,8 @@ import render from 'koa-ejs';
 import bodyParser from 'koa-bodyparser';
 import path from 'path';
 import session from 'koa-session';
-//import MainDAO from "./dao/MainDAO.js";
-//import MyDAO from "./dao/MyDAO.js";
-
-//import Charge from './services/stripe';
 import Service from './services/service';
-//import serve from "koa-static"; // CJS: require('koa-static')
 
-// 
 dotenv.config();
 
 const app = new Koa();
@@ -25,14 +19,14 @@ const router = new Router();
 const PORT = 3000;
 //app.use(session());
 app.keys = ['Shh, its a secret!'];
-app.use(session(null,app));
+app.use(session(null, app));
 app.use(json(null));
 app.use(bodyParser());
 const GC_RELEASE = "2023-10-02";
 // 
 //const dao = new MainDAO(process.env.MONGO_DEV_URL);
 //const myConn = JSON.parse(process.env.MYSQL_DEV);
-const service = new Service(process.env.MONGO_DEV_URL??"");
+const service = new Service(process.env.MONGO_DEV_URL ?? "");
 
 //const myDao = new MyDAO(myConn)
 let ssn;
@@ -58,7 +52,7 @@ app.use(router.routes);
 router.get("/", async (ctx: Context, next) => {
   await ctx.render('stripe', { serverURL: GC_SERVER_URL });
 });
-router.get("/donate", async (ctx:Context) => {
+router.get("/donate", async (ctx: Context) => {
   await ctx.render('stripe', { serverURL: GC_SERVER_URL });
 });
 //  
@@ -66,13 +60,12 @@ router.get("/key/:key/:val", async (ctx) => {
   const key = ctx.params.key;
   const val = ctx.params.val;
   let rv;
-  if (val === "get")
-  {
-      rv = await service.getKeyValue(key)
+  if (val === "get") {
+    rv = await service.getKeyValue(key)
   } else {
-      rv = await service.addKeyValue(key, val);
+    rv = await service.addKeyValue(key, val);
   }
-  
+
   ctx.body = rv;
 });
 router.get("/health", async (ctx) => {
@@ -88,44 +81,43 @@ router.get("/hello/:name", async (ctx) => {
   ctx.body = "Hello " + ctx.params.name;
 });
 
-router.get("/user", async (ctx:Context) => {
+router.get("/user", async (ctx: Context) => {
   try {
-    ctx.body = ctx.session?ctx.session["user"]:"";
+    ctx.body = ctx.session ? ctx.session["user"] : "";
   } catch (e) {
-    
+
   }
 });
-router.get("/products", async (ctx:Context) => {
+router.get("/products", async (ctx: Context) => {
 
   const products = await service.getProducts();
   console.log("products:", products);
   await ctx.render('products', {
     products: products,
-    serverURL:GC_SERVER_URL
+    serverURL: GC_SERVER_URL
   });
 });
-router.post("/api/checkout", async (ctx:Context) => {
+router.post("/api/checkout", async (ctx: Context) => {
   console.log("checkout:", ctx.request.body);
   const data = ctx.request.body ?? {}
   const resp = await service.purchase(data);
   ctx.body = resp;
 });
-router.get("/api/products", async (ctx:Context) => {
+router.get("/api/products", async (ctx: Context) => {
   const products = await service.getProducts();
   console.log("products:", products);
   ctx.body = products;
 });
-router.post("/charge", async (ctx:Context) => {
+router.post("/charge", async (ctx: Context) => {
   try {
     console.log("charge:", ctx.request.body);
-    if (!ctx.request.body)
-    {
+    if (!ctx.request.body) {
       ctx.body = {
         status: -1, id: 0, message: "error posting...", errMsg: "data missing"
       };
       return;
     }
-    const data = ctx.request.body ?? {email:"",fullName:"",amount:0};
+    const data = ctx.request.body ?? { email: "", fullName: "", amount: 0 };
     const resp = await service.charge(data["email"], ctx.request.body["fullName"], ctx.request.body["amount"]);
     // charge (email,fullName,email)
     ctx.body = resp;
@@ -134,7 +126,7 @@ router.post("/charge", async (ctx:Context) => {
     ctx.body = { status: -1, id: 0, message: "error posting...", errMsg: e };
   }
 });
-router.get("/success/:id/:token", async (ctx:Context) => {
+router.get("/success/:id/:token", async (ctx: Context) => {
   const id = ctx.params.id;
   console.log("SUCCESS ", id);
   try {
@@ -147,11 +139,11 @@ router.get("/success/:id/:token", async (ctx:Context) => {
     await ctx.render('confirm', { obj: obj })
   } catch (e) {
     const obj = { status: -1, message: "error", id: id }
-    ctx.body=obj;
+    ctx.body = obj;
   }
 
 });
-router.get("/cancel/:id/:token", async (ctx:Context) => {
+router.get("/cancel/:id/:token", async (ctx: Context) => {
   const id = ctx.params.id;
   try {
     const obj = { status: 1, message: "paid", id: id }
@@ -162,11 +154,11 @@ router.get("/cancel/:id/:token", async (ctx:Context) => {
     ctx.render("confirm", { obj: obj })
   } catch (e) {
     const obj = { status: -1, message: "error", id: id }
-    ctx.body=obj;
+    ctx.body = obj;
   }
 });
 router.get('/login', (ctx) => {
-  const msg = ctx.query.msg||"enter your credentials";
+  const msg = ctx.query.msg || "enter your credentials";
   const form = `
     <html><head><title>login</title></head><body>
    <h1>Login Page: </h1><p>${msg}</p>
@@ -180,7 +172,7 @@ router.get('/login', (ctx) => {
 
 });
 router.post('/login', async (ctx: Context) => {
-  const data = ctx.request.body ?? {username:"missing", password:"missing"};
+  const data = ctx.request.body ?? { username: "missing", password: "missing" };
   const username = data["username"];
   const password = data["password"];
   console.log("/login:", username);
