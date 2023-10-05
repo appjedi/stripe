@@ -2,7 +2,6 @@
 import dotenv from "dotenv";
 import Koa from "koa";
 import { Context, DefaultState } from "koa";
-//import KoaRouter from 'koa-router';
 import Router from "koa-router";
 
 import json from "koa-json";
@@ -10,14 +9,9 @@ import render from "koa-ejs";
 import bodyParser from "koa-bodyparser";
 import path from "path";
 import session from "koa-session";
-//import MainDAO from "./dao/MainDAO.js";
-//import MyDAO from "./dao/MyDAO.js";
 
-//import Charge from './services/stripe';
 import Service from "./services/service";
-//import serve from "koa-static"; // CJS: require('koa-static')
 
-//
 dotenv.config();
 
 const app = new Koa();
@@ -115,7 +109,7 @@ router.post("/video", async (ctx: Context) => {
 router.get("/user", async (ctx: Context) => {
   try {
     ctx.body = ctx.session ? ctx.session["user"] : "";
-  } catch (e) {}
+  } catch (e) { }
 });
 router.get("/products", async (ctx: Context) => {
   const products = await service.getProducts();
