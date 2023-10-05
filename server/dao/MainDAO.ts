@@ -291,21 +291,6 @@ class MainDAO {
     if (data && data.length > 0) {
       const u = data[0];
       return data[0].toObject();
-      /*
-      const id = u._id.toString();
-      const user = {
-        userId: id,
-        username: u.email,
-        lastName: u.lastName,
-        firstName: u.firstName,
-        email: u.email,
-        password: "******",
-        roleId: 1,
-        status: 1,
-        donations: u.donations,
-      };
-      return user;
-      */
     } else {
       const nm = email.split("@")[0];
       const user = {

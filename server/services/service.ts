@@ -105,7 +105,7 @@ class Service {
       return { status: -1, message: "error" };
     }
   };
-  saveVideo = async (data: Object) => {
+  saveVideo = async (data) => {
     try {
       console.log("console", data);
       //  usp_video_save (0,'test.com', '2023-08-01','TITLE','source',1,1,1,1,1,1,1)
@@ -174,7 +174,7 @@ class Service {
     email: string,
     fullName: string,
     amount: number,
-    description: string=""
+    description: string = ""
   ) => {
     const item: IItem = {
       productId: 1,
