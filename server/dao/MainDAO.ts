@@ -8,8 +8,8 @@ import {
   IPurchase,
   IDonation,
   ICart,
-  IItem,
-  IReceipt,
+  IStudent,
+  IVideo,
 } from "./Interfaces";
 
 class MainDAO {
@@ -22,7 +22,11 @@ class MainDAO {
   private PurchaseData: mongoose.Model<IPurchase>;
   private keyValueSchema: Schema<IKeyValue>;
   private KeyValueData: mongoose.Model<IKeyValue>;
+  private videoDataSchema: Schema<IVideo>;
+  private VideoData: mongoose.Model<IVideo>;
 
+  private studentDataSchema: Schema<IStudent>;
+  private StudentData: mongoose.Model<IStudent>;
   constructor(url: string) {
     this.url = url; //this.getConnURL();
     this.init(this.url);
@@ -87,6 +91,24 @@ class MainDAO {
       { collection: "key_values" }
     );
     this.KeyValueData = mongoose.model("KeyValueData", this.keyValueSchema);
+
+    this.studentDataSchema = new Schema(
+      {
+        email: { type: String, required: true },
+        id: Number,
+        age: Number,
+        attended: Number,
+        parentGuardian: String,
+        phoneNumber: String,
+        startDate: String,
+        status: Number,
+        rank: Number,
+        attendance: Array,
+      },
+      { collection: "students" }
+    );
+
+    this.StudentData = mongoose.model("StudentData", this.studentDataSchema);
   };
   addKeyValue = async (key: string, value: string) => {
     const rv = await this.KeyValueData.create({ key: key, value: value });
@@ -265,8 +287,11 @@ class MainDAO {
   };
   getUserByEmail = async (email: string) => {
     const data = await this.UserData.find({ email: email });
-    if (data) {
+    console.log("getUserByEmail", data);
+    if (data && data.length > 0) {
       const u = data[0];
+      return data[0].toObject();
+      /*
       const id = u._id.toString();
       const user = {
         userId: id,
@@ -280,6 +305,7 @@ class MainDAO {
         donations: u.donations,
       };
       return user;
+      */
     } else {
       const nm = email.split("@")[0];
       const user = {
@@ -297,10 +323,94 @@ class MainDAO {
     }
   };
   getVideos = async (id: number) => {};
-  getStudents = async (id: number) => {};
-  postAttendance = async (list) => {};
-  createStudent = async (student) => {};
-  updateStudent = async (student) => {};
+  // getStudents = async (id: number) => {};
+  getStudents = async (id) => {
+    const query = id === 0 ? {} : { _id: id };
+    //console.log("getStudents v2:", query);
+    const data = await this.StudentData.find(query);
+    const students = [];
+    for (let row of data) {
+      students.push(row.toObject());
+    }
+    //const donations = data ? data.donations : [];
+    return students;
+  };
+  createStudent = async (student) => {
+    try {
+      console.log("ManDAO.updateStudent pre:", student);
+      const id = student.id;
+      await this.StudentData.create(student);
+      return { status: 1, message: "updateStudent done" };
+    } catch (e) {
+      console.log("ManDAO.updateStudent ex", e);
+      return { status: -1, message: "createStudent failed" };
+    }
+  };
+  postAttendance = async (list) => {
+    try {
+      for (let row of list) {
+        console.log("ROW:", row);
+        let s = await this.getStudents(row.id);
+        if (s) {
+          s = s[0];
+          console.log("STUDENT:", s);
+          const posted = new Date();
+          const rec = {
+            classDate: row.classDate,
+            dojoId: row.dojoId,
+            posted: posted,
+          };
+          if (!s["attendance"]) {
+            console.log("NO ATTENDANCE");
+            s["attendance"] = [];
+          }
+          //console.log("POSTING: ", s.attendance);
+          const id = s["id"];
+          s["attendance"].push(rec);
+          console.log("POSTING: ", s["attendance"]);
+
+          await this.StudentData.findOneAndUpdate(
+            { id: id },
+            { attendance: s["attendance"] }
+          );
+        }
+      }
+      const msg = list.length + " rows updated";
+      return { status: 1, message: msg };
+    } catch (e) {
+      console.log("MainDAO.postAttendance ex", e);
+      return { status: -1, message: "postAttendance error" };
+    }
+  };
+  updateStudent = async (student: IStudent) => {
+    try {
+      const id = student.id;
+      const data = {
+        name: student.name,
+        parentGuardian: student.parentGuardian,
+        age: student.age,
+        email: student.email,
+        phoneNumber: student.phoneNumber,
+        rank: student.rank,
+        startDate: student.startDate,
+        status: student.status,
+      };
+      console.log(id, "UPDATE STUDENT: ", data);
+      await this.StudentData.findByIdAndUpdate(id, data);
+      /*
+       {
+        startDate: student.startDate,
+        status: student.status,
+        age: student.age,
+        phoneNumber: student.phoneNumber,
+      }
+      */
+      return { status: 1, message: "updated" };
+    } catch (e) {
+      console.log(e);
+      return { status: -1, message: "error updating student" };
+    }
+  };
   dbAuth = async (username: string, password: string): Promise<Object> => {
     const data = await this.UserData.find({ username: username });
     if (!data) {
@@ -312,7 +422,8 @@ class MainDAO {
     console.log("dbAuth::", data[0]);
 
     const user = {
-      username: data[0].email,
+      id: 1,
+      username: username,
       status: 1,
       message: "Authenticated",
       userId: data[0]._id,

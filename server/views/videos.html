@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+      td,
+      th {
+        border: solid;
+        padding: 5px;
+      }
+
+      .classEditForm {
+        position: absolute;
+        top: 80px;
+        left: 360px;
+        width: 40%;
+        z-index: 1000;
+        color: #225599;
+        background-color: #dfeeff;
+        border: solid;
+        text-align: left;
+      }
+
+      .formWrapper {
+        padding: 10px;
+      }
+
+      .row {
+        position: relative;
+        height: 30px;
+      }
+
+      .col1 {
+        position: absolute;
+        left: 5px;
+      }
+
+      .col2 {
+        position: absolute;
+        left: 150px;
+      }
+
+      .textarea {
+        position: relative;
+        height: 100px;
+      }
+
+      .classImage {
+        position: absolute;
+        top: 15px;
+        left: 480px;
+      }
+    </style>
+    <script>
+      const videos = <%-JSON.stringify(videos)%>;
+      const GC_URL="http://localhost:3000/";
+      let GV_VIDEO_ID=0;
+      let GV_VIDEO_OBJ;
+      function editVideo(idx)
+      {
+          GV_VIDEO_OBJ=videos[idx];
+          console.log (idx, ") editVideo", GV_VIDEO_OBJ);
+          GV_VIDEO_ID=GV_VIDEO_OBJ.id;
+          title.value=GV_VIDEO_OBJ.title;
+          url.value=GV_VIDEO_OBJ.url;
+          videoDate.value=GV_VIDEO_OBJ.video_date;
+          status.value=GV_VIDEO_OBJ.status;
+          sortOrder.value=GV_VIDEO_OBJ.sortOrder;
+          $("#form1").show();
+
+      }
+      function addVideo() {
+          let GV_VIDEO_ID=0;
+          title.value="";
+          url.value="";
+          videoDate.value="";
+          status.value=0;
+          sortOrder.value=0;
+
+          $("#form1").show();
+      }
+      async function save()
+      {
+          const data = {
+            id:GV_VIDEO_ID,
+            title:title.value,
+            url:url.value,
+            videoDate:videoDate.value,
+            sortOrder:parseInt(sortOrder.value),
+            categoryId:1,
+            hostedBy:1,
+            sectionId:1,
+            eventId:1,
+            status:status.value,
+            reorder:0
+          }
+          console.log ("SAVE DATA:", data);
+          const resp = await fetch (GC_URL+"video",
+          {
+            method:"post",
+            headers:{
+              'Content-Type':"application/json"
+            },
+            body: JSON.stringify(data)
+          })
+          const json = await resp.json();
+          console.log(json);
+          alert(json[0].message);
+          $("#form1").hide();
+
+      }
+      function cancel ()
+      {
+          $("#form1").hide();
+      }
+      function pageLoad(){
+        $("#form1").hide();
+        displayVideos();
+      }
+      function displayVideos()
+      {
+       // console.log("VIDEOS", videos);
+        let content="";
+        let idx=0;
+        for (let row of videos)
+        {
+          //console.log(row);
+            const tr = `<tr><td><a href='javascript:editVideo(${idx})'>${row.title}</a></td></tr>`;
+            content+=tr;
+            ++idx;
+        }
+        //console.log ("content",content)
+        tboydId.innerHTML=content;
+      }
+    </script>
+  </head>
+  <body onload="pageLoad()">
+    <h2>Videos <a href="javascript:addVideo()">[+]</a>:</h2>
+    <div id="form1" class="classEditForm">
+      <p>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          placeholder="title"
+          size="50"
+        />
+      </p>
+      <p>
+        <input type="text" name="url" id="url" placeholder="url" size="50" />
+      </p>
+      <p>
+        <select id="hostedBy" name="hostedBy">
+          <option value="0">YouTube</option>
+        </select>
+      </p>
+      <p>
+        <input
+          type="date"
+          name="videoDate"
+          id="videoDate"
+          placeholder="videoDate"
+        />
+      </p>
+      <p>
+        <select id="status" name="status">
+          <option value="1">Current</option>
+          <option value="2">Not Current</option>
+          <option value="9">DELETE</option>
+        </select>
+      </p>
+      <p>
+        Order By:<br />
+        <input type="number" id="sortOrder" size="5" />
+      </p>
+      <p>
+        <button id="btnSave" onClick="save()">Save</button>
+        <button id="btnCancel" onClick="cancel()">Cancel</button>
+      </p>
+    </div>
+    <div id="divTable">
+      <table>
+        <tr>
+          <th>Title</th>
+        </tr>
+        <tbody id="tboydId"></tbody>
+      </table>
+    </div>
+  </body>
+  <script>
+    const title = document.getElementById("title");
+    const url = document.getElementById("url");
+    const source = document.getElementById("source");
+    const videoDate = document.getElementById("videoDate");
+    const sortOrder = document.getElementById("sortOrder");
+    const tboydId = document.getElementById("tboydId");
+
+    const status = document.getElementById("status");
+  </script>
+</html>

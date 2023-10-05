@@ -33,9 +33,10 @@ class Service {
       const keyValues = await this.getKeyValues();
       this.keyValues = keyValues;
       //   console.log("keyValues", this.keyValues);
-      const myConn = this.getKeyValueLocal("MySQL_CONN", "");
-      //const myConn = ' { "host": "appdojo.net", "user": "appjedin_sensei", "database": "appjedin_training", "password": "Sensei2022!", "dialect": "mysql" }';
-      // console.log("myConn", myConn);
+      //const myConn = this.getKeyValueLocal("MySQL_CONN", "");
+      const myConn =
+        '{"host":"appdojo.net","user":"appjedin_dba","database":"appjedin_wkk_prod","password":"$Data2022", "dialect":"mysql"}';
+      console.log("myConn", myConn);
       this.dao = new MyDAO(JSON.parse(myConn + ""));
       let temp = this.getKeyValueLocal("MAIL_OPTIONS", "");
       //console.log("MAIL_OPTIONS:", temp);
@@ -133,7 +134,11 @@ class Service {
   getStudents = async (id: number) => {
     try {
       const rows = await this.mainDAO.getStudents(id);
-      //  console.log(id, "ROWS:", rows);
+      const students = [];
+      for (let row of rows) {
+        students.push(row);
+      }
+      console.log(id, "ROWS:", rows);
       if (rows != null) return id === 0 ? rows : rows[0];
       else return null;
     } catch (e) {

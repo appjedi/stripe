@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+      td, th{
+        border:solid;
+        padding:5px;
+      }
+    </style>
+   
+    <script>
+
+      const GC_URL="http://localhost:3000/";
+
+      async function save()
+      {
+          const data = {
+            id:0,
+            name:fullName.value,
+            parentGuardian:parentGuardian.value,
+            email:email.value,
+            phoneNumber:phone.value,
+            rank:rank.value,
+            startDate:startDate.value,
+            status:status.value
+          }
+          console.log ("SAVE DATA:", data);
+          const resp = await fetch (GC_URL+"student", {
+          method:"post",
+          headers:{
+            'Content-Type':"application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        const json = await resp.json();
+        console.log(json);
+ 
+      }
+     
+
+    </script>
+  </head>
+  <body onload="pageLoad()">
+
+    <h2>New Student:</h2>
+    <div id="form1">
+      <p>
+        <input
+          type="text"
+          name="fullName"
+          id="fullName"
+          placeholder="Full Name"
+        />
+      </p>
+      <p>
+        <input
+          type="text"
+          name="parentGuardian"
+          id="parentGuardian"
+          placeholder="Parent/Gardian"
+        />
+      </p>
+      <p><input type="email" name="email" id="email" placeholder="email" /></p>
+      <p><input type="text" name="phone" id="phone" placeholder="phone" /></p>
+
+      <p>
+        <select id="rank" name="rank">
+          <option value="0">Rank</option>
+          <option value="1">White</option>
+          <option value="2">Yellow</option>
+          <option value="3">Orange</option>
+          <option value="4">Green</option>
+          <option value="5">Blue</option>
+          <option value="6">Purple</option>
+          <option value="7">Brown 3rd kyu</option>
+          <option value="9">Brown 2nd kyu</option>
+          <option value="9">Brown 1st kyu</option>
+          <option value="10">Black Shodan</option>
+          <option value="11">Black Nidan</option>
+          <option value="12">Black Sandan</option>
+        </select>
+      </p>
+      <p>
+        <input
+          type="date"
+          name="startDate"
+          id="startDate"
+          placeholder="startDate"
+        />
+      </p>
+      <p>
+        <select id="status" name="status">
+          <option value="1">Current</option>
+          <option value="2">Not Current</option>
+        </select>
+      </p>
+      <p><button id="btnSave" onClick="save()">Add</button>
+    </p>
+    </form>
+  </div>
+  </body>
+  <script>
+    const fullName = document.getElementById("fullName");
+    const parentGuardian = document.getElementById("parentGuardian");
+    const phone = document.getElementById("phone");
+    const email = document.getElementById("email");
+    const rank = document.getElementById("rank");
+    const startDate = document.getElementById("startDate");
+    const status = document.getElementById("status");
+  </script>
+</html>

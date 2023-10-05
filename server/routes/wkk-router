@@ -1,0 +1,105 @@
+import { Context } from "koa";
+import Router from "koa-router";
+import session from "koa-session";
+import Service from "../services/service";
+const service = new Service(process.env.MONGO_DEV_URL ?? "");
+
+const router = new Router();
+
+const GC_STUDENTS = [];
+const GC_LEVELS = [
+  "None",
+  "White",
+  "Yellow",
+  "Orange",
+  "Green",
+  "Blue",
+  "Purple",
+  "Brown 3rd",
+  "Brown 2nd",
+  "Brown 1st",
+  "Shodan",
+  "Nidan",
+  "Sandan",
+];
+let ssn;
+router.get("/", async (ctx: Context) => {
+  ssn = ctx.session;
+  if (!ssn || !ssn["user"]) {
+    ctx.redirect("/login?msg=Please login");
+    return;
+  }
+  const s = (await service.getStudents(0)) ?? [{ rank: 0, name: "" }];
+
+  // console.log(s);
+  s.sort((a, b) => {
+    const diff = b.rank - a.rank;
+    if (diff !== 0) {
+      return diff;
+    }
+    return b.name > a.name ? -1 : 1;
+  });
+  // console.log("STUDENTS:", s);
+  await ctx.render("index", { students: s, levels: GC_LEVELS });
+});
+
+router.get("/api/students", async (ctx) => {
+  const students = await service.getStudents(0);
+  ctx.body = students;
+});
+router.get("/students", async (ctx: Context) => {
+  ssn = ctx.session;
+  if (!ssn || !ssn["user"]) {
+    ctx.redirect("/login?msg=Please login");
+    return;
+  }
+  const s = (await service.getStudents(0)) ?? [{ rank: 0, name: "" }];
+  // console.log("STUDENTS:", s);
+  s.sort((a, b) => {
+    const diff = b.rank - a.rank;
+    if (diff !== 0) {
+      return diff;
+    }
+    return b.name > a.name ? -1 : 1;
+  });
+  // console.log("STUDENTS:", s);
+  await ctx.render("students", { students: s, levels: GC_LEVELS });
+});
+router.get("/student/:id", async (ctx: Context) => {
+  const id = ctx.params.id;
+  console.log("get student by id", id);
+  const student = await service.getStudents(id);
+  console.log("STUDENT:", student);
+  ctx.body = student;
+});
+const GC_SERVER_URL = "";
+router.get("/products", async (ctx: Context) => {
+  const products = await service.getProducts();
+  console.log("products:", products);
+  await ctx.render("products", {
+    products: products,
+    serverURL: GC_SERVER_URL,
+  });
+});
+
+router.post("/student", async (ctx) => {
+  const s = ctx.request.body;
+  console.log("POST STUDENT:", s);
+  const resp = await service.createStudent(s);
+  console.log("RESP", resp);
+  ctx.body = resp;
+});
+router.post("/attendance", async (ctx) => {
+  const s = ctx.request.body;
+  console.log("attendance:", s);
+  const resp = await service.updateStudent(s);
+  //const resp = { status: 1, message: "done" };
+  console.log("RESP", resp);
+  ctx.body = resp;
+});
+router.put("/student", async (ctx) => {
+  const s = ctx.request.body;
+  console.log("PUT", s);
+  const resp = await service.updateStudent(s);
+  ctx.body = resp;
+});
