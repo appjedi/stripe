@@ -44,6 +44,7 @@ export interface IItem {
   productId: number;
   quantity: number;
   price: number;
+  description: string;
 }
 export interface ICart {
   customerId: number;

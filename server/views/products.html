@@ -64,12 +64,23 @@
       let GV_PROD_OBJ;
 
       async function addToCart(idx) {
-          const qty = prompt("Quanity");
-          products[idx]['qty']=qty;
+
+          if(products[idx].price==0)
+          {
+            let price = parseInt(prompt("Donation Amount $"));
+            products[idx]['price']=price;
+            products[idx]['qty']=1;
+          }else {
+            let qty = prompt("Quanity");
+            products[idx]['qty']=qty;
+          }
+          /*
           const item = {
             id:products[idx].id,
-            quantity:qty
+            quantity:qty,
+            price: price
           }
+          */
       }
       async function checkout ()
       {

@@ -52,6 +52,14 @@ class Service {
   getProducts = async () => {
     return GC_PRODUCTS;
   };
+  getProduct = (id: number) => {
+    for (let prod of GC_PRODUCTS) {
+      if (prod.id === id) {
+        return prod;
+      }
+    }
+    return null;
+  };
   getKeyValueLocal = (key: string, alt: string): string => {
     for (let kv of this.keyValues) {
       if (kv.key === key) {
@@ -135,9 +143,7 @@ class Service {
     try {
       const rows = await this.mainDAO.getStudents(id);
       const students = [];
-      for (let row of rows) {
-        students.push(row);
-      }
+
       console.log(id, "ROWS:", rows);
       if (rows != null) return id === 0 ? rows : rows[0];
       else return null;
@@ -164,11 +170,17 @@ class Service {
     console.log("STRIPE:", resp2);
     return resp2;
   };
-  charge = async (email: string, fullName: string, amount: number) => {
+  charge = async (
+    email: string,
+    fullName: string,
+    amount: number,
+    description: string
+  ) => {
     const item: IItem = {
       productId: 1,
       quantity: 1,
       price: amount,
+      description: description,
     };
     console.log("service.charge:", item);
     const items: Array<IItem> = [item];
