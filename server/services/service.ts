@@ -34,8 +34,10 @@ class Service {
       this.keyValues = keyValues;
       //   console.log("keyValues", this.keyValues);
       //const myConn = this.getKeyValueLocal("MySQL_CONN", "");
-      const myConn =
+      const myConnProd =
         '{"host":"appdojo.net","user":"appjedin_dba","database":"appjedin_wkk_prod","password":"$Data2022", "dialect":"mysql"}';
+      const myConn =
+        '{"host":"127.0.0.1","user":"root","database":"dev","password":"Jedi2023","dialect":"mysql"}';
       console.log("myConn", myConn);
       this.dao = new MyDAO(JSON.parse(myConn + ""));
       let temp = this.getKeyValueLocal("MAIL_OPTIONS", "");

@@ -1,5 +1,18 @@
 const { Sequelize, DataTypes, QueryTypes } = require("sequelize");
 
+const conn = {
+  user: "",
+  password: "",
+  host: "0.0.0.0",
+  dialect: "sqlite",
+  pool: {
+    max: 5,
+    min: 0,
+    idle: 10000,
+  },
+
+  storage: "./data.db",
+};
 let sequelize;
 
 let connection;
@@ -39,19 +52,7 @@ class SQLConn {
 
 //process.env.USER, process.env.PASSWORD;
 
-const conn = {
-  user: "",
-  password: "",
-  host: "0.0.0.0",
-  dialect: "sqlite",
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000,
-  },
 
-  storage: "./data.db",
-};
 async function insertUser(un, pw) {
   try {
     const db = new SQLConn(conn);
@@ -69,7 +70,7 @@ const createTableUser = async () => {
     const db = new SQLConn(conn);
 
     const create =
-      "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(50),password  VARCHAR(50),role_id INTEGER, status INTEGER) ";
+      "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(50),password  VARCHAR(50),role_id INTEGER, status INTEGER)";
     //const values = [un, pw];
     db.execute(create);
     console.log("table created.");
@@ -82,6 +83,6 @@ async function main() {
   const rows = await db.query("SELECT * FROM users", null);
   console.log(rows);
 }
-//insertUser("tuesday", 'Test1234');
+//insertUser("testerb", 'Test1234');
 //createTableUser();
 main();

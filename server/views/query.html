@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <title>Query</title>
+    <script>
+      const SERVER_ROOT_URL = "<%=serverURL%>";
+      const query = async () => {
+        const q = $("#query").val();
+        const resp = await fetch(SERVER_ROOT_URL + "/api/query/" + q);
+        const json = await resp.json();
+        $("#divResults").html(JSON.stringify(json));
+      };
+    </script>
+  </head>
+
+  <body>
+    <div id="divForm">
+      <p>
+        <textarea id="query" rows="5" cols="80"> </textarea>
+      </p>
+
+      <p><button onclick="query()">Query</button></p>
+    </div>
+    <div id="divResults"></div>
+  </body>
+</html>

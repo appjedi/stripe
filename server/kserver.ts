@@ -82,6 +82,16 @@ router.get("/key/:key/:val", async (ctx: Context) => {
 router.get("/health", async (ctx: Context) => {
   ctx.body = { status: 200, release: GC_RELEASE, message: "I'm alive" };
 });
+router.get("/query", async (ctx: Context) => {
+  await ctx.render("query", { serverURL: GC_SERVER_URL });
+});
+router.get("/api/query/:q", async (ctx: Context) => {
+  const q = ctx.params.q;
+  console.log("QUERY:", q);
+  const resp = await service.query(q, []);
+  console.log("RESP", resp);
+  ctx.body = resp;
+});
 router.get("/mytest/:msg", async (ctx: Context) => {
   const msg = ctx.params.msg;
   //const users = await myDao.query("SELECT * FROM users");
