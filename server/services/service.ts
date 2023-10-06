@@ -134,7 +134,15 @@ class Service {
       return { status: -1, message: "error" };
     }
   };
-  execute = async (query: string, values: Array<Object>) => {};
+  execute = async (query: string, values: Array<Object>) => {
+    try {
+      const result = await this.dao.execute(query, values);
+      console.log("result", result);
+      return result;
+    } catch (e) {
+      return { status: -1, message: "error" };
+    }
+  };
 
   getUsers = async (id) => {
     const users = await this.mainDAO.getUsers();

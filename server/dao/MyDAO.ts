@@ -22,6 +22,7 @@ class MyDAO {
       connection.password,
       {
         host: connection.host,
+        dialect: "mysql",
       }
     );
     sequelize
@@ -37,18 +38,25 @@ class MyDAO {
     query: string,
     values: Array<Object>
   ): Promise<Array<Object>> => {
-    const results = await sequelize.query(query, {
-      replacements: values,
-      type: QueryTypes.SELECT,
-    });
-    console.log(results);
-    return results;
+    try {
+      const results = await sequelize.query(query, {
+        replacements: values,
+        type: QueryTypes.SELECT,
+      });
+      console.log("query.results", results);
+      return results;
+    } catch (e) {
+      console.log("query.error", e);
+      return [{ status: 1, message: e }];
+    }
   };
   execute = async (query: string, values: Array<Object>) => {
     const results = await sequelize.query(query, {
       replacements: values,
     });
-    return results;
+    if (results) {
+      return results;
+    } else return [{ status: 1, message: "done" }];
   };
 }
 export default MyDAO;
