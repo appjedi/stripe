@@ -47,16 +47,21 @@ class MyDAO {
       return results;
     } catch (e) {
       console.log("query.error", e);
-      return [{ status: 1, message: e }];
+      return [{ status: -1, message: e }];
     }
   };
   execute = async (query: string, values: Array<Object>) => {
-    const results = await sequelize.query(query, {
-      replacements: values,
-    });
-    if (results) {
-      return results;
-    } else return [{ status: 1, message: "done" }];
+    try {
+      const results = await sequelize.query(query, {
+        replacements: values,
+      });
+      if (results) {
+        return results;
+      } else return [{ status: 1, message: "done" }];
+    } catch (e) {
+      console.log("query.error", e);
+      return [{ status: -1, message: e }];
+    }
   };
 }
 export default MyDAO;
