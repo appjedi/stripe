@@ -1,6 +1,6 @@
 // source: https://www.youtube.com/watch?v=z84uTk5zmak
 import dotenv from "dotenv";
-import Koa from 'koa';
+import Koa from "koa";
 import { Context, DefaultState } from "koa";
 import Router from "koa-router";
 
@@ -23,12 +23,9 @@ app.use(session(null, app));
 app.use(json(null));
 app.use(bodyParser());
 const GC_RELEASE = "2023-10-02";
-//
-//const dao = new MainDAO(process.env.MONGO_DEV_URL);
-//const myConn = JSON.parse(process.env.MYSQL_DEV);
+
 const service = new Service(process.env.MONGO_DEV_URL ?? "");
 
-//const myDao = new MyDAO(myConn)
 let ssn;
 const GC_STUDENTS = [];
 const GC_LEVELS = [
@@ -109,7 +106,7 @@ router.post("/video", async (ctx: Context) => {
 router.get("/user", async (ctx: Context) => {
   try {
     ctx.body = ctx.session ? ctx.session["user"] : "";
-  } catch (e) { }
+  } catch (e) {}
 });
 router.get("/products", async (ctx: Context) => {
   const products = await service.getProducts();
