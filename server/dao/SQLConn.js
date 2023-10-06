@@ -33,18 +33,28 @@ class SQLConn {
       });
   };
   query = async (query, values) => {
-    const results = await sequelize.query(query, {
-      replacements: values,
-      type: QueryTypes.SELECT,
-    });
-    // console.log(results);
-    return results;
+    try{
+      const results = await sequelize.query(query, {
+        replacements: values,
+        type: QueryTypes.SELECT,
+      });
+      // console.log(results);
+      return results;
+    } catch (e) {
+      console.log("query.error", e);
+      return [{ status: -1, message: e }];
+    }
   };
   execute = async (query, values) => {
-    const results = await sequelize.query(query, {
-      replacements: values,
-    });
-    return results;
+    try{
+      const results = await sequelize.query(query, {
+        replacements: values,
+      });
+      return results;
+    } catch (e) {
+      console.log("execute.error", e);
+      return [{ status: -1, message: e }];
+    }
   };
 }
 
