@@ -32,7 +32,7 @@ class SQLConn {
       });
   };
   query = async (query, values) => {
-    try{
+    try {
       const results = await sequelize.query(query, {
         replacements: values,
         type: QueryTypes.SELECT,
@@ -45,7 +45,7 @@ class SQLConn {
     }
   };
   execute = async (query, values) => {
-    try{
+    try {
       const results = await sequelize.query(query, {
         replacements: values,
       });
@@ -76,12 +76,11 @@ const tables = [
 const createTables = async () => {
   try {
     const db = new SQLConn(conn);
-    for (let t of tables)
-    {
-        console.log(`about to create ${t}.`);
+    for (let t of tables) {
+      // console.log(`about to create ${t}.`);
 
-        db.execute(t);
-        console.log(`table ${t} created.`);
+      db.execute(t);
+      console.log(`table ${t} created.`);
     }
     //const values = [un, pw];
     console.log("table created.");
@@ -109,5 +108,5 @@ async function main() {
 }
 //insertUser("testerb", 'Test1234');
 //createTableUser();
-createTables();
-//main();
+//createTables();
+main();
