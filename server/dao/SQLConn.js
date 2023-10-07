@@ -56,7 +56,7 @@ class SQLConn {
     }
   };
 }
-
+// 414-401-5454
 async function insertUser(un, pw) {
   try {
     const db = new SQLConn(conn);
@@ -69,6 +69,11 @@ async function insertUser(un, pw) {
     console.log("error:", ex);
   }
 }
+const tables = [
+  "CREATE TABLE logger (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, message VARCHAR(4000) DEFAULT NULL, log_date DATETIME DEFAULT NULL)",
+  "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(50),password  VARCHAR(50),role_id INTEGER, status INTEGER)"
+];
+
 const createTableUser = async () => {
   try {
     const db = new SQLConn(conn);
