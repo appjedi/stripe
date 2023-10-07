@@ -71,9 +71,24 @@ async function insertUser(un, pw) {
 }
 const tables = [
   "CREATE TABLE logger (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, message VARCHAR(4000) DEFAULT NULL, log_date DATETIME DEFAULT NULL)",
-  "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(50),password  VARCHAR(50),role_id INTEGER, status INTEGER)"
+  "CREATE TABLE users2 (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(50),password  VARCHAR(50),role_id INTEGER, status INTEGER)"
 ];
+const createTables = async () => {
+  try {
+    const db = new SQLConn(conn);
+    for (let t of tables)
+    {
+        console.log(`about to create ${t}.`);
 
+        db.execute(t);
+        console.log(`table ${t} created.`);
+    }
+    //const values = [un, pw];
+    console.log("table created.");
+  } catch (ex) {
+    console.log("error:", ex);
+  }
+}
 const createTableUser = async () => {
   try {
     const db = new SQLConn(conn);
@@ -94,4 +109,5 @@ async function main() {
 }
 //insertUser("testerb", 'Test1234');
 //createTableUser();
-main();
+createTables();
+//main();
