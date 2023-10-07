@@ -10,7 +10,6 @@ const conn = {
     min: 0,
     idle: 10000,
   },
-
   storage: "./data.db",
 };
 let sequelize;
@@ -57,11 +56,6 @@ class SQLConn {
     }
   };
 }
-
-//export default SQLConn;
-
-//process.env.USER, process.env.PASSWORD;
-
 
 async function insertUser(un, pw) {
   try {
