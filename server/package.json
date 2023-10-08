@@ -23,6 +23,7 @@
     "koa-static": "^5.0.0",
     "mongodb": "^4.9.0",
     "mongoose": "^7.3.4",
+    "morgan": "^1.10.0",
     "mysql2": "^3.6.0",
     "nodemailer": "^6.9.5",
     "request-promise": "^4.2.6",
@@ -30,7 +31,8 @@
     "sqlite3": "^5.1.6",
     "stripe": "^8.222.0",
     "sync-mysql": "^3.0.1",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@types/koa-bodyparser": "^4.3.10",

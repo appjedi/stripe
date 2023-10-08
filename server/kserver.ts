@@ -11,7 +11,8 @@ import path from "path";
 import session from "koa-session";
 
 import Service from "./services/service";
-
+import morgan from "morgan";
+import winston from "winston";
 dotenv.config();
 
 const app = new Koa();
@@ -22,6 +23,20 @@ app.keys = ["Shh, its a secret!"];
 app.use(session(null, app));
 app.use(json(null));
 app.use(bodyParser());
+const logConfigurationConsole = {
+  transports: [new winston.transports.Console()],
+};
+const logConfiguration = {
+  transports: [
+    new winston.transports.File({
+      filename: "logs/example.log",
+    }),
+  ],
+};
+const logger = winston.createLogger(logConfiguration);
+
+app.use(morgan("dev"));
+
 const GC_RELEASE = "2023-10-02";
 
 const service = new Service(process.env.MONGO_DEV_URL ?? "");
@@ -293,6 +308,7 @@ router.put("/student", async (ctx) => {
   ctx.body = resp;
 });
 app.listen(PORT, () => {
+  logger.log({ message: "started with winston", level: "info" });
   console.log("TS-listening on port:", PORT);
 });
 

@@ -69,9 +69,10 @@ async function insertUser(un, pw) {
     console.log("error:", ex);
   }
 }
+
 const tables = [
   "CREATE TABLE logger (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, message VARCHAR(4000) DEFAULT NULL, log_date DATETIME DEFAULT NULL)",
-  "CREATE TABLE users2 (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(50),password  VARCHAR(50),role_id INTEGER, status INTEGER)"
+  "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(50),password  VARCHAR(50),role_id INTEGER, status INTEGER)"
 ];
 const createTables = async () => {
   try {
