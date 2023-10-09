@@ -34,7 +34,7 @@ const logConfiguration = {
 };
 const logger = winston.createLogger(logConfiguration);
 
-const GC_RELEASE = "2023-10-02";
+const GC_RELEASE = "2023-10-09";
 
 const service = new Service(process.env.MONGO_DEV_URL ?? "");
 
