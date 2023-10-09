@@ -11,7 +11,6 @@ import path from "path";
 import session from "koa-session";
 
 import Service from "./services/service";
-import morgan from "morgan";
 import winston from "winston";
 dotenv.config();
 
@@ -35,29 +34,13 @@ const logConfiguration = {
 };
 const logger = winston.createLogger(logConfiguration);
 
-app.use(morgan("dev"));
-
 const GC_RELEASE = "2023-10-02";
 
 const service = new Service(process.env.MONGO_DEV_URL ?? "");
 
 let ssn;
 const GC_STUDENTS = [];
-const GC_LEVELS = [
-  "None",
-  "White",
-  "Yellow",
-  "Orange",
-  "Green",
-  "Blue",
-  "Purple",
-  "Brown 3rd",
-  "Brown 2nd",
-  "Brown 1st",
-  "Shodan",
-  "Nidan",
-  "Sandan",
-];
+
 const GC_MONGO_DB_NAME = "wkk";
 //
 
@@ -283,7 +266,10 @@ router.get("/students", async (ctx: Context) => {
     return b.name > a.name ? -1 : 1;
   });
   // console.log("STUDENTS:", s);
-  await ctx.render("students", { students: s, levels: GC_LEVELS });
+  await ctx.render("students", {
+    students: s,
+    levels: Service.getLevels(),
+  });
 });
 router.post("/student", async (ctx: Context) => {
   const s = ctx.request.body;

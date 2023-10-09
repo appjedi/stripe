@@ -9,6 +9,21 @@ const GC_PRODUCTS = [
   { id: 3, name: "Promotion Fee", description: "Promotion Fee", price: 25 },
   { id: 4, name: "Donation", description: "Donation", price: 0 },
 ];
+const GC_LEVELS = [
+  "None",
+  "White",
+  "Yellow",
+  "Orange",
+  "Green",
+  "Blue",
+  "Purple",
+  "Brown 3rd",
+  "Brown 2nd",
+  "Brown 1st",
+  "Shodan",
+  "Nidan",
+  "Sandan",
+];
 class KeyValue {
   public key: String;
   public value: String;
@@ -50,6 +65,9 @@ class Service {
     } catch (e) {
       console.log("Init error:", e);
     }
+  };
+  static getLevels = () => {
+    return GC_LEVELS;
   };
   getProducts = async () => {
     return GC_PRODUCTS;

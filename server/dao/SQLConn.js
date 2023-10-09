@@ -20,7 +20,7 @@ class SQLConn {
     connection = connObj;
     this.init();
   }
-  init = () => {
+  init = async () => {
     sequelize = new Sequelize(connection);
     sequelize
       .authenticate()
