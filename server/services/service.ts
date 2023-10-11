@@ -3,6 +3,8 @@ import MyDAO from "../dao/MyDAO";
 import Charge from "./stripe";
 import nodeMailer from "nodemailer";
 import { IMailAuth, ICart, IItem, IPurchase } from "../dao/Interfaces";
+import winston from "winston";
+
 const GC_PRODUCTS = [
   { id: 1, name: "Patch", description: "Patch", price: 15 },
   { id: 2, name: "Gi with Patch", description: "Gi with Patch", price: 30 },

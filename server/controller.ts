@@ -2,9 +2,8 @@ import { Context } from "koa";
 import dotenv from "dotenv";
 
 import Service from "./services/service";
-import winston from "winston";
 
-let ssn;
+let ssn: any;
 class Controller {
   private service: Service;
   private GC_SERVER_URL: string;
@@ -12,7 +11,7 @@ class Controller {
   constructor() {
     this.service = new Service(process.env.MONGO_DEV_URL ?? "");
     this.GC_SERVER_URL = process.env.SERVER_URL + "";
-    this.GC_RELEASE = "2023-10-10";
+    this.GC_RELEASE = "2023-10-11";
   }
 
   getValue = async (ctx: Context): Promise<void> => {
@@ -206,7 +205,7 @@ class Controller {
     console.log("RESP", resp);
     ctx.body = resp;
   };
-  postAttendance = async (ctx) => {
+  postAttendance = async (ctx: Context) => {
     const s = ctx.request.body;
     console.log("attendance:", s);
     //const resp = await service.updateStudent(s);
@@ -215,7 +214,7 @@ class Controller {
     console.log("RESP", resp);
     ctx.body = resp;
   };
-  putStudent = async (ctx) => {
+  putStudent = async (ctx: Context) => {
     const s = ctx.request.body;
     console.log("PUT", s);
     const resp = await this.service.updateStudent(s);
