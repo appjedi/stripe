@@ -1,5 +1,5 @@
 import { Context } from "koa";
-import dotenv from "dotenv";
+//import dotenv from "dotenv";
 
 import Service from "./services/service";
 
@@ -17,7 +17,7 @@ class Controller {
   getValue = async (ctx: Context): Promise<void> => {
     const key = ctx.params.key;
     const val = ctx.params.val;
-    let rv;
+    let rv: any;
     if (val === "get") {
       rv = await this.service.getKeyValue(key);
     } else {
