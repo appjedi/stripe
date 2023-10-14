@@ -42,9 +42,11 @@ class Controller {
     await ctx.render("videos", { videos: videos });
   };
   postVideo = async (ctx: Context) => {
-    const videos = await this.service.getVideos();
+    const data = ctx.request.body;
+    const resp = await this.service.saveVideo(data);
+    //const videos = await this.service.getVideos();
     //ctx.body = videos;
-    await ctx.render("videos", { videos: videos });
+    ctx.body = resp;
   };
   productsForm = async (ctx: Context) => {
     const products = await this.service.getProducts();

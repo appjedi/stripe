@@ -32,16 +32,6 @@ const logConfiguration = {
 };
 const logger = winston.createLogger(logConfiguration);
 
-const GC_RELEASE = "2023-10-10";
-
-//const service = new Service(process.env.MONGO_DEV_URL ?? "");
-
-let ssn;
-const GC_STUDENTS = [];
-
-const GC_MONGO_DB_NAME = "wkk";
-//
-
 console.log("DIRNAME", path.resolve());
 const GC_DIRNAME = path.resolve();
 //const __dirname = GC_DIRNAME + "/";

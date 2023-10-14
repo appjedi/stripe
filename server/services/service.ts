@@ -118,7 +118,7 @@ class Service {
       return [{ status: -1, message: "error" }];
     }
   };
-  getVideosFromMongo = async (id) => {
+  getVideosFromMongo = async (id: any) => {
     try {
       const videos = await this.mainDAO.getVideos(id);
       return videos;
