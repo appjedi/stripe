@@ -13,7 +13,6 @@ class Controller {
     this.GC_SERVER_URL = process.env.SERVER_URL + "";
     this.GC_RELEASE = "2023-10-11";
   }
-
   getValue = async (ctx: Context): Promise<void> => {
     const key = ctx.params.key;
     const val = ctx.params.val;
@@ -23,7 +22,6 @@ class Controller {
     } else {
       rv = await this.service.addKeyValue(key, val);
     }
-
     ctx.body = rv;
   };
   queryPage = async (ctx: Context) => {
