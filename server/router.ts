@@ -11,7 +11,7 @@ const controller = new Controller();
 //const service = new Service(process.env.MONGO_DEV_URL ?? "");
 const GC_SERVER_URL = process.env.SERVER_URL;
 const GC_RELEASE = "2023-10-11";
-let ssn;
+let ssn: any;
 router.get("/", async (ctx: Context, next) => {
   await ctx.render("stripe", { serverURL: GC_SERVER_URL });
 });
@@ -27,7 +27,7 @@ router.get("/hello/:name", async (ctx: Context) => {
 router.get("/user", async (ctx: Context) => {
   try {
     ctx.body = ctx.session ? ctx.session["user"] : "";
-  } catch (e) {}
+  } catch (e) { }
 });
 
 router.get("/key/:key/:val", controller.getValue);
