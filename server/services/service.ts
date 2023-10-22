@@ -188,6 +188,16 @@ class Service {
       fullName: data["fullName"],
       cart: data["cart"],
     };
+    const errors: any = [];
+    if (cart.email === "") {
+      errors.push({ message: "email missing or invalid" });
+    }
+    if (cart.fullName === "") {
+      errors.push({ message: "Full Name missing or invalid" });
+    }
+    if (errors.length > 0) {
+      return { status: -1, errors: errors }
+    }
     const resp: Object = await this.mainDAO.addPurchase(cart);
     console.log("MainDAO.RESP", resp);
     const resp2 = await Charge.charge(
