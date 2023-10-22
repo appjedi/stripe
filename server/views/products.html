@@ -85,7 +85,7 @@
 		e.preventDefault();
 		const fullName = $("#fullName").val();
 		const email = $("#email").val();
-		if (email==="")
+		if (fullName===""||email==="")
 		{
 			alert("Name and/or email required");
 			return false;
@@ -172,7 +172,7 @@
 	<hr/>
   <div>
 	<form id='form1'">
-    <p><input type="text" id="fullName" placeholder="Your Name" /></p>
+    <p><input type="text" id="fullName" placeholder="Your Name" required/></p>
     <p><input type="email" id="email" placeholder="Your Email" required/></p>
   </div>
   <div id="divTable">
