@@ -9,7 +9,11 @@ const GC_PRODUCTS = [
   { id: 1, name: "Patch", description: "Patch", price: 15, qty: 0 },
   { id: 2, name: "Gi with Patch", description: "Gi with Patch", price: 30, qty: 0 },
   { id: 3, name: "Promotion Fee", description: "Promotion Fee", price: 30, qty: 0 },
-  { id: 4, name: "Donation", description: "Donation", price: 1, qty: 0 },
+  {
+    id: 4, name: "Donation",
+    description: "Wado Ki Kai is a 501(c)3 non profit.  Your donation is tax deductible.",
+    price: 1, qty: 0
+  },
 ];
 const GC_LEVELS = [
   "None",
