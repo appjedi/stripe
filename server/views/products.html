@@ -1,160 +1,160 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Page Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <style>
-      td,
-      th {
-        border: solid;
-        padding: 5px;
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <style>
+    td,
+    th {
+      border: solid;
+      padding: 5px;
+    }
+
+    .classEditForm {
+      position: absolute;
+      top: 80px;
+      left: 360px;
+      width: 40%;
+      z-index: 1000;
+      color: #225599;
+      background-color: #dfeeff;
+      border: solid;
+      text-align: left;
+    }
+
+    .formWrapper {
+      padding: 10px;
+    }
+
+    .row {
+      position: relative;
+      height: 30px;
+    }
+
+    .col1 {
+      position: absolute;
+      left: 5px;
+    }
+
+    .col2 {
+      position: absolute;
+      left: 150px;
+    }
+
+    .textarea {
+      position: relative;
+      height: 100px;
+    }
+
+    .classImage {
+      position: absolute;
+      top: 15px;
+      left: 480px;
+    }
+  </style>
+  <script>
+    const products = <%- JSON.stringify(products) %>;
+    const cart = [];
+    const GC_URL = "<%=serverURL%>";
+    let GV_PROD_ID = 0;
+    let GV_PROD_OBJ;
+
+    async function addToCart(idx) {
+
+      if (products[idx].price == 0) {
+        let price = parseInt(prompt("Donation Amount $"));
+        products[idx]['price'] = price;
+        products[idx]['qty'] = 1;
+      } else {
+        let qty = prompt("Quanity");
+        products[idx]['qty'] = qty;
       }
 
-      .classEditForm {
-        position: absolute;
-        top: 80px;
-        left: 360px;
-        width: 40%;
-        z-index: 1000;
-        color: #225599;
-        background-color: #dfeeff;
-        border: solid;
-        text-align: left;
-      }
+    }
+    async function checkout() {
 
-      .formWrapper {
-        padding: 10px;
-      }
-
-      .row {
-        position: relative;
-        height: 30px;
-      }
-
-      .col1 {
-        position: absolute;
-        left: 5px;
-      }
-
-      .col2 {
-        position: absolute;
-        left: 150px;
-      }
-
-      .textarea {
-        position: relative;
-        height: 100px;
-      }
-
-      .classImage {
-        position: absolute;
-        top: 15px;
-        left: 480px;
-      }
-    </style>
-    <script>
-      const products = <%-JSON.stringify(products)%>;
-      const cart=[];
-      const GC_URL="<%=serverURL%>";
-      let GV_PROD_ID=0;
-      let GV_PROD_OBJ;
-
-      async function addToCart(idx) {
-
-          if(products[idx].price==0)
-          {
-            let price = parseInt(prompt("Donation Amount $"));
-            products[idx]['price']=price;
-            products[idx]['qty']=1;
-          }else {
-            let qty = prompt("Quanity");
-            products[idx]['qty']=qty;
-          }
-          /*
-          const item = {
-            id:products[idx].id,
-            quantity:qty,
-            price: price
-          }
-          */
-      }
-      async function checkout ()
-      {
-
-        const cart=[];
-        for (let prod of products)
-        {
-          if (prod['qty']>0)
-          {
-            const item = {id:prod.id,price:prod.price, quantity:parseInt(prod.qty)}
-            cart.push(item);
-          }
+      const cart = [];
+	  let idx=0;
+      for (let prod of products) {
+		const qty = parseInt($("#qty"+idx).val());
+        if (qty > 0) {
+          const item = { id: prod.id, price: prod.price, quantity: qty }
+          cart.push(item);
         }
-        const data = {
-          fullName: $("#fullName").val(),
-          email:$("#email").val(),
-          cart:cart
-        }
-        console.log("CART", data);
-        const resp = await fetch (GC_URL+"/api/checkout", {
-          method:"post",
-          headers:{
-            'Content-Type':"application/json"
-          },
-          body: JSON.stringify(data)
-        });
-        const json = await resp.json();
-        if(json.status===200)
-        {
-          window.open(json.url);
-        }
-        console.log("resp", json);
+		++idx;
       }
-      function cancel ()
-      {
-          $("#form1").hide();
+      const data = {
+        fullName: $("#fullName").val(),
+        email: $("#email").val(),
+        cart: cart
       }
-      function pageLoad(){
-        $("#form1").hide();
-        displayProducts();
+      console.log("CART", data);
+
+      const resp = await fetch(GC_URL + "/api/checkout", {
+        method: "post",
+        headers: {
+          'Content-Type': "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+      const json = await resp.json();
+      if (json.status === 200) {
+        window.open(json.url);
       }
-      function displayProducts()
-      {
-       // console.log("VIDEOS", videos);
-        let content="";
-        let idx=0;
-        for (let row of products)
-        {
-          //console.log(row);
-            const tr = `<tr><td><a href='javascript:addToCart(${idx})'>${row.name}</a></td><td>${row.price}</td></tr>`;
-            content+=tr;
-            ++idx;
-        }
-        //console.log ("content",content)
-        tboydId.innerHTML=content;
+      console.log("resp", json);
+    }
+    function cancel() {
+      $("#form1").hide();
+    }
+    function pageLoad() {
+      $("#form1").hide();
+      displayProducts();
+    }
+    function displayProducts() {
+      // console.log("VIDEOS", videos);
+      let content = "";
+      let idx = 0;
+      for (let row of products) {
+        //console.log(row);
+		const max=row.price>0?100:10000;
+        const tr = `<tr><td><a href='javascript:addToCart(${idx})'>${row.name}</a></td><td>${row.price}</td><td><input type='number' id='qty${idx}' min='0' max='${max}' value='0'/></td></tr>`;
+        content += tr;
+        ++idx;
       }
-    </script>
-  </head>
-  <body onload="pageLoad()">
-    <div>
-      <p><input type="text" id="fullName" placeholder="Your Name" /></p>
-      <p><input type="email" id="email" placeholder="Your Email" /></p>
-    </div>
-    <div id="divTable">
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>Price</th>
-        </tr>
-        <tbody id="tboydId"></tbody>
-      </table>
-    </div>
-    <div>
-      <button onClick="checkout()">Checkout</button>
-    </div>
-  </body>
+      //console.log ("content",content)
+      tboydId.innerHTML = content;
+    }
+    function showCart() {
+		console.log(products);
+    }
+  </script>
+</head>
+
+<body onload="pageLoad()">
+  <div>
+    <p><input type="text" id="fullName" placeholder="Your Name" /></p>
+    <p><input type="email" id="email" placeholder="Your Email" /></p>
+  </div>
+  <div id="divTable">
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+		<th>Quantity</th>
+      </tr>
+      <tbody id="tboydId"></tbody>
+    </table>
+  </div>
+  <div>
+    <button onClick="checkout()">Checkout</button>
+	<button onClick="showCart()">Cart</button>
+
+  </div>
+</body>
+
 </html>

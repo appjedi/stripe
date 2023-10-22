@@ -147,12 +147,12 @@ class MainDAO {
   addPurchase = async (cart: ICart): Promise<Object> => {
     try {
       const user = await this.getUserByEmail(cart.email);
-      //console.log("addPurchase.user:", cart);
+      console.log("addPurchase.user:", cart);
       const userId = 0; //(user ? user.userId : "");
       let amount: number = 0;
       for (let item of cart.cart) {
         //console.log("ADD ITEM:", item);
-        amount += item.price * item.quantity;
+        amount += (item.price === 0 ? 1 : item.price) * item.quantity;
       }
       const id = new Date().getTime();
       const item = {
@@ -307,7 +307,7 @@ class MainDAO {
       return user;
     }
   };
-  getVideos = async (id: number) => {};
+  getVideos = async (id: number) => { };
   // getStudents = async (id: number) => {};
   getStudents = async (id) => {
     const query = id === 0 ? {} : { _id: id };
