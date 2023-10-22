@@ -79,8 +79,22 @@
 	{
 		alert(products[idx].description);
 	}
+	function formSubmit(e)
+	{
+		console.log("checkout")
+		e.preventDefault();
+		const fullName = $("#fullName").val();
+		const email = $("#email").val();
+		if (fullName===""||email==="")
+		{
+			alert("Name and/or email required");
+			return false;
+		}
+		checkout();
+		return false;
+	}
     async function checkout() {
-
+	
       const cart = [];
 	  let idx=0;
       for (let prod of products) {
@@ -110,12 +124,13 @@
         window.open(json.url);
       }
       console.log("resp", json);
+	  
     }
     function cancel() {
       $("#form1").hide();
     }
     function pageLoad() {
-      $("#form1").hide();
+      $("#form1").submit(formSubmit);
       displayProducts();
     }
     function displayProducts() {
@@ -156,8 +171,9 @@
 	<h1>Products:</h1>
 	<hr/>
   <div>
-    <p><input type="text" id="fullName" placeholder="Your Name" /></p>
-    <p><input type="email" id="email" placeholder="Your Email" /></p>
+	<form id='form1'">
+    <p><input type="text" id="fullName" placeholder="Your Name" required/></p>
+    <p><input type="email" id="email" placeholder="Your Email" required/></p>
   </div>
   <div id="divTable">
     <table>
@@ -172,8 +188,9 @@
   </div>
   <hr/>
   <div>
-    <button onClick="checkout()">Checkout</button>
+    <button >Checkout</button>
   </div>
+  </form>
 </body>
 
 </html>
