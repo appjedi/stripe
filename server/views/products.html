@@ -83,7 +83,7 @@
       for (let prod of products) {
 		const qty = parseInt($("#qty"+idx).val());
         if (qty > 0) {
-          const item = { id: prod.id, price: prod.price, quantity: qty }
+          const item = { id: prod.id, price: (prod.price===0?1:prod.price), quantity: qty }
           cart.push(item);
         }
 		++idx;
@@ -142,7 +142,7 @@
 		GV_TOTAL=0;
 		for (let prod of products)
 		{
-			GV_TOTAL+= prod.price * prod.qty;
+			GV_TOTAL+= (prod.price===0?1:prod.price) * prod.qty;
 		}
 		$("#divTotal").html("<h3>Total $"+GV_TOTAL+"</h3>");
 	}
