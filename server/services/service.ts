@@ -126,7 +126,7 @@ class Service {
       return { status: -1, message: "error" };
     }
   };
-  saveVideo = async (data) => {
+  saveVideo = async (data: any) => {
     try {
       console.log("console", data);
       //  usp_video_save (0,'test.com', '2023-08-01','TITLE','source',1,1,1,1,1,1,1)
@@ -275,7 +275,7 @@ class Service {
     return resp;
   };
 
-  sendMail = async (mailOptions) => {
+  sendMail = async (mailOptions: any) => {
     try {
       const transporter = nodeMailer.createTransport({
         host: this.mailAuth.host,

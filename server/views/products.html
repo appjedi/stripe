@@ -63,7 +63,7 @@
     const GC_URL = "<%=serverURL%>";
     let GV_PROD_ID = 0;
     let GV_PROD_OBJ;
-
+	let GV_TOTAL=0;
     async function addToCart(idx) {
 
       if (products[idx].price == 0) {
@@ -122,7 +122,7 @@
       for (let row of products) {
         //console.log(row);
 		const max=row.price>0?100:10000;
-        const tr = `<tr><td><a href='javascript:addToCart(${idx})'>${row.name}</a></td><td>$${row.price}</td><td><input type='number' id='qty${idx}' min='0' max='${max}' value='0'/></td></tr>`;
+        const tr = `<tr><td><a href='javascript:addToCart(${idx})'>${row.name}</a></td><td>$${row.price}</td><td><input type='number' id='qty${idx}' min='0' max='${max}' value='0' onblur='qty_blur(this,${idx})'/></td></tr>`;
         content += tr;
         ++idx;
       }
@@ -132,10 +132,26 @@
     function showCart() {
 		console.log(products);
     }
+	function qty_blur(btn, idx)
+	{
+		console.log("qty_blur:",idx, btn.value);
+		const qty=btn.value;
+		const price = products[idx].price;
+		products[idx].qty=qty;
+		const total = qty*price;
+		GV_TOTAL=0;
+		for (let prod of products)
+		{
+			GV_TOTAL+= prod.price * prod.qty;
+		}
+		$("#divTotal").html("<h3>Total $"+GV_TOTAL+"</h3>");
+	}
   </script>
 </head>
 
 <body onload="pageLoad()">
+	<h1>Products:</h1>
+	<hr/>
   <div>
     <p><input type="text" id="fullName" placeholder="Your Name" /></p>
     <p><input type="email" id="email" placeholder="Your Email" /></p>
@@ -149,7 +165,9 @@
       </tr>
       <tbody id="tboydId"></tbody>
     </table>
+	<div id='divTotal'></div>
   </div>
+  <hr/>
   <div>
     <button onClick="checkout()">Checkout</button>
   </div>
