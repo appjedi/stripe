@@ -192,7 +192,7 @@ class Controller {
       }
       return b.name > a.name ? -1 : 1;
     });
-    // console.log("STUDENTS:", s);
+    console.log("STUDENTS:", s);
     await ctx.render("students", {
       students: s,
       levels: Service.getLevels(),

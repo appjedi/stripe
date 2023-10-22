@@ -249,7 +249,7 @@ class Service {
     const msg = await this.mainDAO.postAttendance(list);
     return msg;
   };
-  createStudent = async (student) => {
+  createStudent = async (student: any) => {
     return this.mainDAO.createStudent(student);
   };
   updateStudent = async (student) => {

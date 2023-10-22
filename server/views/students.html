@@ -1,291 +1,260 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Wado Ki Kai</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <style>
-      td, th{
-        border:solid;
-        padding:5px;
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Wado Ki Kai</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <style>
+    td,
+    th {
+      border: solid;
+      padding: 5px;
+    }
+  </style>
+  <script>
+    let students = <%- JSON.stringify(students) %>;
+    const levels = <%- JSON.stringify(levels) %>;
+
+    const GC_URL = "/";
+
+    let dateId = getDateId(new Date());
+
+    function pageLoad() {
+      display();
+      $("#dateId").val(dateId);
+      $("#form1").hide();
+    }
+    function attend(cb, idx) {
+      console.log("ATTEND: ", students[idx]);
+      students[idx].attended = students[idx].attended === 1 ? 0 : 1;
+      //alert(students[idx].name+"Attended.");
+    }
+    let GV_CURRENT_STUDENT_IDX;
+    function edit(idx) {
+      console.log("edit:", students[idx]);
+      //alert(students[idx].name);
+      GV_CURRENT_STUDENT_IDX = idx;
+      $("#fullName").val(students[idx].name);
+
+      $("#parentGuardian").val(students[idx].parentGuardian);
+      $("#phone").val(students[idx].phoneNumber);
+      $("#email").val(students[idx].email);
+      $("#age").val(students[idx]['age']);
+      $("#rank").val(parseInt(students[idx].rank));
+      $("#startDate").val(students[idx].startDate);
+      $("#status").val(students[idx].status);
+
+      if (students[idx]["attendance"] !== undefined && students[idx]["attendance"] !== null) {
+        let att = "<ol>";
+
+        for (let a of students[idx]["attendance"]) {
+          const li = `<li>${a.classDate}</li>`;
+          att += li;
+
+        }
+        $("#divAttendance").html(att);
+      } else {
+        $("#divAttendance").html("");
       }
-    </style>
-    <script>
-      let students = <%- JSON.stringify(students)%>;
-      const levels = <%- JSON.stringify(levels)%>;
+      $("#form1").show();
+      $("#table1").hide();
 
-      const GC_URL="/";
+    }
+    function newMember() {
+      GV_CURRENT_STUDENT_IDX = -1;
+      $("#fullName").val("");
 
-      let dateId=getDateId(new Date());
+      $("#ParentGardian").val("");
+      $("#phone").val("");
+      $("#email").val("");
+      $("#age").val("");
 
-      function pageLoad() {
+      $("#form1").show();
+      $("#table1").hide();
+    }
+    function cancel() {
+      $("#form1").hide();
+      $("#table1").show();
+    }
+    function saveLocal() {
+      console.log("SAVE LOCAL:", students);
+      localStorage.setItem("ATTENDANCE-ALAMEDA", JSON.stringify(students));
+    }
+    async function save() {
+      const idx = GV_CURRENT_STUDENT_IDX;
+
+      const data = {
+        id: idx === -1 ? 0 : students[idx]._id,
+        name: fullName.value,
+        parentGuardian: parentGuardian.value,
+        age: age.value,
+        email: email.value,
+        phoneNumber: phone.value,
+        rank: rank.value,
+        startDate: startDate.value,
+        status: status.value
+      }
+      console.log("SAVE DATA:", data);
+      const resp = await fetch(GC_URL + "student", {
+        method: idx === -1 ? "post" : "put",
+        headers: {
+          'Content-Type': "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      const json = await resp.json();
+      console.log(json);
+      alert("Member Saved");
+      cancel();
+      localStorage.setItem("ATTENDANCE-ALAMEDA", JSON.stringify(students));
+    }
+    function retrieve() {
+      $("#form1").hide();
+      const temp = localStorage.getItem("ATTENDANCE-ALAMEDA");
+      if (temp) {
+        students = JSON.parse(temp);
+        console.log("retrieve.found:", students);
         display();
-        $("#dateId").val(dateId);
-        $("#form1").hide();
+      } else {
+        console.log("retrieve.not found:", students);
       }
-      function attend(cb, idx)
-      {
-        console.log ("ATTEND: ", students[idx]);
-        students[idx].attended =  students[idx].attended ===1?0:1; 
-        //alert(students[idx].name+"Attended.");
-      }
-      let GV_CURRENT_STUDENT_IDX;
-      function edit(idx) {
-        console.log ("edit:",students[idx]);
-        //alert(students[idx].name);
-        GV_CURRENT_STUDENT_IDX=idx;
-        $("#fullName").val(students[idx].name);
-
-        $("#parentGuardian").val(students[idx].parentGuardian);
-        $("#phone").val(students[idx].phoneNumber);
-        $("#email").val(students[idx].email);
-        $("#age").val(students[idx]['age']);
-        $("#rank").val(parseInt(students[idx].rank));
-        $("#startDate").val(students[idx].startDate);
-        $("#status").val(students[idx].status);
-        
-        if (students[idx]["attendance"]!==undefined && students[idx]["attendance"]!==null)
-        {
-          let att="<ol>";
-
-          for (let a of students[idx]["attendance"])
-          {
-            const li=`<li>${a.classDate}</li>`;
-            att+=li;
-
-          }
-          $("#divAttendance").html(att);
-        }else{
-           $("#divAttendance").html("");
+    }
+    function display() {
+      let rows = "";
+      students.forEach((row, i) => {
+        const checked = row.attended === 1 ? "checked" : "";
+        const tr = `<tr><td><a href='javascript:edit(${i})'>${row.name}</a></td><td>${levels[row.rank]}</td><td>${row.email}</td><td><input type='checkbox' ${checked} onClick='attend(this, ${i})'/></a></td></tr>`;
+        rows += tr;
+      });
+      // 
+      $("#tbody1").html(rows);
+    }
+    async function send() {
+      const data = []
+      const posted = new Date();
+      for (let row of students) {
+        if (row.attended === 1) {
+          const a = { id: row._id, name: row.name, classDate: dateId, dojoId: 1, posted: posted }
+          data.push(a);
         }
-        $("#form1").show();
-        $("#table1").hide();
+      }
 
+      const resp = await fetch(GC_URL + "attendance", {
+        method: "post",
+        headers: {
+          'Content-Type': "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      const json = await resp.json();
+      console.log(json);
+      alert(json.message);
+    }
+    function getDateId(dt = null) {
+      if (!dt) {
+        dt = new Date();
       }
-      function newMember()
-      {  
-        GV_CURRENT_STUDENT_IDX=-1;
-        $("#fullName").val("");
-
-        $("#ParentGardian").val("");
-        $("#phone").val("");
-        $("#email").val("");
-        $("#age").val("");
-
-        $("#form1").show();
-        $("#table1").hide();
-      }
-      function cancel() {
-        $("#form1").hide();
-        $("#table1").show();
-      }
-      function saveLocal ()
-      {
-        console.log ("SAVE LOCAL:", students);
-        localStorage.setItem("ATTENDANCE-ALAMEDA", JSON.stringify(students));
-      }
-      async function save()
-      {
-          const idx=GV_CURRENT_STUDENT_IDX;
-
-          const data = {
-            id:idx===-1?0:students[idx]._id,
-            name:fullName.value,
-            parentGuardian:parentGuardian.value,
-            age:age.value,
-            email:email.value,
-            phoneNumber:phone.value,
-            rank:rank.value,
-            startDate:startDate.value,
-            status:status.value
-          }
-          console.log ("SAVE DATA:", data);
-          const resp = await fetch (GC_URL+"student", {
-            method:idx===-1?"post":"put",
-            headers:{
-              'Content-Type':"application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        const json = await resp.json();
-        console.log(json);
-         alert("Member Saved");
-	      cancel();
-          localStorage.setItem("ATTENDANCE-ALAMEDA", JSON.stringify(students));
-      }
-      function retrieve ()
-      {
-          $("#form1").hide();
-          const temp = localStorage.getItem("ATTENDANCE-ALAMEDA");
-          if(temp)
-          {
-            students=JSON.parse(temp);
-            console.log("retrieve.found:",students);
-            display();
-          }else {
-            console.log("retrieve.not found:",students);
-          }
-      }
-    function display ()
-    {
-          let rows = "";
-          students.forEach((row, i) => {
-            const checked = row.attended===1?"checked":"";
-            const tr = `<tr><td><a href='javascript:edit(${i})'>${row.name}</a></td><td>${levels[row.rank]}</td><td>${row.email}</td><td><input type='checkbox' ${checked} onClick='attend(this, ${i})'/></a></td></tr>`;
-            rows += tr;
-          });
-// 
-          $("#tbody1").html(rows);
-      }
-      async function send()
-      {
-        const data=[]
-        const posted=new Date();
-        for (let row of students)
-        {
-          if(row.attended===1)
-          {
-            const a ={id:row._id, name:row.name, classDate:dateId, dojoId:1, posted: posted}
-            data.push(a);
-          }
+      const y = (dt.getYear() + 1900) * 10000;
+      const m = (dt.getMonth() + 1) * 100;
+      const d = dt.getDate();
+      const id = y + m + d;
+      return id;
+    }
+    function resetData() {
+      localStorage.removeItem("ATTENDANCE-ALAMEDA");
+    }
+    function dateId_Change(fld) {
+      dateId = fld.value;
+      console.log("dateId_Change:", dateId);
+    }
+    function emailList() {
+      const file1 = $("#file1");
+      console.log("FILE1:", file1);
+      let list = "";
+      for (let row of students) {
+        if ((row.email + "").indexOf("@") > 0) {
+          list += row.email + ";";
         }
-        
-        const resp = await fetch (GC_URL+"attendance", {
-          method:"post",
-          headers:{
-            'Content-Type':"application/json"
-          },
-          body: JSON.stringify(data)
-        })
-        const json = await resp.json();
-        console.log(json);
-        alert(json.message);
       }
-      function getDateId(dt=null)
-      {
-          if(!dt)
-          {
-            dt = new Date();
-          }
-          const y = (dt.getYear()+1900)*10000;
-          const m = (dt.getMonth()+1) * 100;
-          const d = dt.getDate();
-          const id= y+m+d;
-          return id;
-      }
-      function resetData()
-      {
-        localStorage.removeItem ("ATTENDANCE-ALAMEDA");
-      }
-      function dateId_Change(fld)
-      {
-        dateId=fld.value;
-        console.log ("dateId_Change:",dateId);
-      }
-      function emailList ()
-      {
-        const file1=$("#file1");
-        console.log("FILE1:",file1);
-        let list="";
-        for (let row of students)
-        {
-          if ((row.email+"").indexOf("@")>0)
-          {
-            list += row.email+";";
-          }
-        }
-        $("#divMessage").html(list);
-        console.log ("EMAIL-LIST:", list);
-      }
-    </script>
-  </head>
-  <body onload="pageLoad()">
-    <h3>Attendance for <span id='dojoId'></span></h3>
-    <div id="divHeader">
-      <input type="text" id="dateId" onChange="dateId_Change(this)"/>
-      <button onClick="saveLocal()">Save Local</button>
-      <button onClick="retrieve()">Retrieve Local</button>
-      <button onClick="send()">Post</button>
-      <button onClick="resetData()">Reset Local Data</button>
-      <button onClick="newMember()">New Student</button>
-      <button onClick="emailList()">Email List</button>
+      $("#divMessage").html(list);
+      console.log("EMAIL-LIST:", list);
+    }
+  </script>
+</head>
+
+<body onload="pageLoad()">
+  <h3>Attendance for <span id='dojoId'></span></h3>
+  <div id="divHeader">
+    <input type="text" id="dateId" onChange="dateId_Change(this)" />
+    <button onClick="saveLocal()">Save Local</button>
+    <button onClick="retrieve()">Retrieve Local</button>
+    <button onClick="send()">Post</button>
+    <button onClick="resetData()">Reset Local Data</button>
+    <button onClick="newMember()">New Student</button>
+    <button onClick="emailList()">Email List</button>
+
+  </div>
+  <hr />
+  <div id="divMessage">
+
+  </div>
+  <table id="table1" border="1">
+    <tr>
+      <th>Name</th>
+      <th>Rank</th>
+      <th>Email</th>
+      <th>Attended</th>
+    </tr>
+    <tbody id="tbody1"></tbody>
+  </table>
+  <div id="form1">
+    <p>
+      <input type="text" name="fullName" id="fullName" placeholder="Full Name" />
+    </p>
+    <p>
+      <input type="text" name="parentGuardian" id="parentGuardian" placeholder="Parent/Gardian" />
+    </p>
+    <p><input type="text" name="age" id="age" placeholder="Age/DOB" /></p>
+    <p><input type="email" name="email" id="email" placeholder="email" /></p>
+    <p><input type="text" name="phone" id="phone" placeholder="phone" /></p>
+
+    <p>
+      <select id="rank" name="rank">
+        <option value="0">Rank</option>
+        <option value="1">White</option>
+        <option value="2">Yellow</option>
+        <option value="3">Orange</option>
+        <option value="4">Green</option>
+        <option value="5">Blue</option>
+        <option value="6">Purple</option>
+        <option value="7">Brown 3rd kyu</option>
+        <option value="8">Brown 2nd kyu</option>
+        <option value="9">Brown 1st kyu</option>
+        <option value="10">Black Shodan</option>
+        <option value="11">Black Nidan</option>
+        <option value="12">Black Sandan</option>
+      </select>
+    </p>
+    <p>
+      <input type="date" name="startDate" id="startDate" placeholder="startDate" />
+    </p>
+    <p>
+      <select id="status" name="status">
+        <option value="1">Current</option>
+        <option value="2">Not Current</option>
+      </select>
+    </p>
+    <p>
+      <input type="file" id="file1" />
+    </p>
+    <div id="divAttendance">
 
     </div>
-    <hr/>
-      <div id="divMessage">
-
-      </div>
-    <table id="table1" border="1">
-      <tr>
-        <th>Name</th>
-        <th>Rank</th>
-        <th>Email</th>
-        <th>Attended</th>
-      </tr>
-      <tbody id="tbody1"></tbody>
-    </table>
-    <div id="form1">
-      <p>
-        <input
-          type="text"
-          name="fullName"
-          id="fullName"
-          placeholder="Full Name"
-        />
-      </p>
-      <p>
-        <input
-          type="text"
-          name="parentGuardian"
-          id="parentGuardian"
-          placeholder="Parent/Gardian"
-        />
-      </p>
-      <p><input type="text" name="age" id="age" placeholder="Age/DOB" /></p>
-      <p><input type="email" name="email" id="email" placeholder="email" /></p>
-      <p><input type="text" name="phone" id="phone" placeholder="phone" /></p>
-
-      <p>
-        <select id="rank" name="rank">
-          <option value="0">Rank</option>
-          <option value="1">White</option>
-          <option value="2">Yellow</option>
-          <option value="3">Orange</option>
-          <option value="4">Green</option>
-          <option value="5">Blue</option>
-          <option value="6">Purple</option>
-          <option value="7">Brown 3rd kyu</option>
-          <option value="8">Brown 2nd kyu</option>
-          <option value="9">Brown 1st kyu</option>
-          <option value="10">Black Shodan</option>
-          <option value="11">Black Nidan</option>
-          <option value="12">Black Sandan</option>
-        </select>
-      </p>
-      <p>
-        <input
-          type="date"
-          name="startDate"
-          id="startDate"
-          placeholder="startDate"
-        />
-      </p>
-      <p>
-        <select id="status" name="status">
-          <option value="1">Current</option>
-          <option value="2">Not Current</option>
-        </select>
-      </p>
-      <p>
-        <input type="file" id="file1"/>
-      </p>
-      <div id="divAttendance">
-
-      </div>
-      <p><button id="btnSave" onClick="save()">Add</button><button id="btnCancel" onClick="cancel()">Cancel</button></p>
+    <p><button id="btnSave" onClick="save()">Add</button><button id="btnCancel" onClick="cancel()">Cancel</button></p>
 
     </form>
 
@@ -300,5 +269,5 @@
     const startDate = document.getElementById("startDate");
     const status = document.getElementById("status");
   </script>
-</html>
 
+</html>

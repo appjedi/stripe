@@ -95,6 +95,7 @@ class MainDAO {
     this.studentDataSchema = new Schema(
       {
         email: { type: String, required: true },
+        name: String,
         id: Number,
         age: Number,
         attended: Number,
@@ -320,7 +321,7 @@ class MainDAO {
     //const donations = data ? data.donations : [];
     return students;
   };
-  createStudent = async (student) => {
+  createStudent = async (student: any) => {
     try {
       console.log("ManDAO.updateStudent pre:", student);
       const id = student.id;
