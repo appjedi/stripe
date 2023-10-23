@@ -32,7 +32,6 @@ const logConfiguration = {
 };
 const logger = winston.createLogger(logConfiguration);
 
-console.log("DIRNAME", path.resolve());
 const GC_DIRNAME = path.resolve();
 //const __dirname = GC_DIRNAME + "/";
 const GC_SERVER_URL = process.env.SERVER_URL;
