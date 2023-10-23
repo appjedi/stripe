@@ -10,8 +10,25 @@ interface DBConnection {
   dialect: string;
 }
 let connection: DBConnection;
+let User;
+/*
+const User = sequelize.define("users", {
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  roleId: {
+    type: DataTypes.INTEGER,
+  }
+});
+*/
 class MyDAO {
-  constructor(connObj) {
+  constructor(connObj: any) {
     connection = connObj;
     this.init();
   }
@@ -63,5 +80,8 @@ class MyDAO {
       return [{ status: -1, message: e }];
     }
   };
+  getConn = () => {
+    return sequelize;
+  }
 }
 export default MyDAO;
