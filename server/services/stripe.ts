@@ -18,7 +18,7 @@ class Charge {
       console.log("CHARGE:", id, amount, description);
       //const dao = new MainDAO();
       const key = await dao.getKeyValue("PAYMENT_API_KEY");
-      const reponseUrl = await dao.getKeyValue("PAYMENT_RESPONSE_URL");
+      const reponseUrl = await dao.getKeyValue("WKK_PAYMENT_RESPONSE_URL");
       const stripe = new Stripe(key + "", {
         apiVersion: "2020-08-27",
       });
