@@ -100,7 +100,7 @@ class Controller {
     try {
       const obj = {
         status: 1,
-        message: "Thank you for your donation!",
+        message: "Thank you for your payment!",
         id: id,
       };
       this.service.updateFromStripe(parseInt(id), 1);
