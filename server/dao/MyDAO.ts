@@ -10,7 +10,7 @@ interface DBConnection {
   dialect: string;
 }
 let connection: DBConnection;
-let User;
+let User: any;
 /*
 const User = sequelize.define("users", {
   username: {
@@ -21,7 +21,6 @@ const User = sequelize.define("users", {
     type: DataTypes.STRING,
     allowNull: false
   },
-
   roleId: {
     type: DataTypes.INTEGER,
   }
@@ -82,6 +81,6 @@ class MyDAO {
   };
   getConn = () => {
     return sequelize;
-  }
+  };
 }
 export default MyDAO;
