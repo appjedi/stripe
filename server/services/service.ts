@@ -7,12 +7,27 @@ import winston from "winston";
 
 const GC_PRODUCTS = [
   { id: 1, name: "Patch", description: "Patch", price: 15, qty: 0 },
-  { id: 2, name: "Gi with Patch", description: "Gi with Patch", price: 30, qty: 0 },
-  { id: 3, name: "Promotion Fee", description: "Promotion Fee", price: 30, qty: 0 },
   {
-    id: 4, name: "Donation",
-    description: "Wado Ki Kai is a 501(c)3 non profit.  Your donation is tax deductible.",
-    price: 1, qty: 0
+    id: 2,
+    name: "Gi with Patch",
+    description: "Gi with Patch",
+    price: 30,
+    qty: 0,
+  },
+  {
+    id: 3,
+    name: "Promotion Fee",
+    description: "Promotion Fee",
+    price: 30,
+    qty: 0,
+  },
+  {
+    id: 4,
+    name: "Donation",
+    description:
+      "Wado Ki Kai is a 501(c)3 non profit.  Your donation is tax deductible.",
+    price: 1,
+    qty: 0,
   },
 ];
 const GC_LEVELS = [
@@ -102,7 +117,7 @@ class Service {
       return "error";
     }
   };
-  addKeyValue = async (key: string, value: string) => { };
+  addKeyValue = async (key: string, value: string) => {};
   getKeyValues = async (): Promise<Array<KeyValue>> => {
     try {
       //const rows: Array<KeyValue>=new Array<KeyValue>();
@@ -167,9 +182,8 @@ class Service {
     }
   };
 
-  getUsers = async (id) => {
+  getUsers = async (id: any) => {
     const users = await this.mainDAO.getUsers();
-    //const suers = await this.dao.query("SELECT * FROM view_users");
     return users;
   };
   getStudents = async (id: number) => {
@@ -197,10 +211,13 @@ class Service {
       errors.push({ field: "email", message: "email missing or invalid" });
     }
     if (cart.fullName === "") {
-      errors.push({ field: "fullName", message: "Full Name missing or invalid" });
+      errors.push({
+        field: "fullName",
+        message: "Full Name missing or invalid",
+      });
     }
     if (errors.length > 0) {
-      return { status: -1, message: "missing or invalid data", errors: errors }
+      return { status: -1, message: "missing or invalid data", errors: errors };
     }
     const resp: Object = await this.mainDAO.addPurchase(cart);
     console.log("MainDAO.RESP", resp);

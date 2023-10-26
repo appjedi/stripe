@@ -187,9 +187,14 @@ class MainDAO {
       { id: id },
       { status: status, paid: paid }
     );
+    const sale = await this.getSale(id);
 
     console.log("updateFromStripe.ID:", id);
-    return "updated";
+    return { status: 1, message: "updated", sale: sale };
+  };
+  getSale = async (id: number) => {
+    const sale = await this.PurchaseData.findOne({ id: id });
+    return sale;
   };
   updateUser = async (
     userId,
@@ -308,7 +313,7 @@ class MainDAO {
       return user;
     }
   };
-  getVideos = async (id: number) => { };
+  getVideos = async (id: number) => {};
   // getStudents = async (id: number) => {};
   getStudents = async (id) => {
     const query = id === 0 ? {} : { _id: id };
