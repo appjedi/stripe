@@ -83,7 +83,7 @@ class Controller {
 
       const resp = await this.service.charge(
         data["email"],
-        ctx.request.body["fullName"],
+        data["fullName"],
         amt
       );
       // charge (email,fullName,email)
