@@ -47,7 +47,6 @@ function makeForm(frm)
             }
         }
         
-        
         t += "<div>"+ft+"</div>";
     }
     t += "</form>";
