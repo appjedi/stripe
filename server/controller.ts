@@ -11,7 +11,7 @@ class Controller {
   constructor() {
     this.service = new Service(process.env.MONGO_DEV_URL ?? "");
     this.GC_SERVER_URL = process.env.SERVER_URL + "";
-    this.GC_RELEASE = "2023-10-11";
+    this.GC_RELEASE = "2023-11-11";
   }
   getValue = async (ctx: Context): Promise<void> => {
     const key = ctx.params.key;
