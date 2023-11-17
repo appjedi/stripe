@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <title>Query</title>
+    <script>
+      const SERVER_ROOT_URL = "<%=serverURL%>";
+      const query = async () => {
+        const q = $("#query").val();
+        const m = $("#method").val();
+        const u = $("#url").val();
+        console.log(u, m, q);
+        if (m === "POST") {
+          const resp = await fetch(u, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: q,
+          });
+
+          const json = await resp.json();
+          $("#divResults").html(JSON.stringify(json));
+        } else if (m === "GET") {
+          const resp = await fetch(u);
+          const json = await resp.json();
+          $("#divResults").html(JSON.stringify(json));
+        }
+      };
+    </script>
+  </head>
+
+  <body>
+    <div id="divForm">
+      <p><input type="text" id="url" size="40" /></p>
+      <p>
+        <select id="method">
+          <option>METHOD</option>
+          <option>POST</option>
+          <option>GET</option>
+        </select>
+      </p>
+      <p>
+        <textarea id="query" rows="10" cols="80"> </textarea>
+      </p>
+
+      <p><button onclick="query()">Send Request</button></p>
+    </div>
+    <div id="divResults"></div>
+  </body>
+</html>
