@@ -26,6 +26,8 @@ const User = sequelize.define("users", {
   }
 });
 */
+
+
 class MyDAO {
   constructor(connObj: any) {
     connection = connObj;
@@ -84,3 +86,15 @@ class MyDAO {
   };
 }
 export default MyDAO;
+
+const testIt = async ()=>{
+  const localDB ={
+    database:"dev",
+    user:"root",
+    password:"Jedi2023",
+    host:"localhost"
+  }
+  const db = new MyDAO(localDB);
+  const results =await db.query("SELECT * FROM users",[]);
+  console.log (results);
+}
