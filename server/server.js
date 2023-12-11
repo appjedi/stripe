@@ -19,8 +19,8 @@ const GC_CONNECTIONS = [{
   password: "Test1234",
   database: "test",
   port: 3306
-}
-];
+}];
+
 const GC_CONN_IDX = 1;
 const connection = new MySql(GC_CONNECTIONS[GC_CONN_IDX]);
 const port = 3000;
