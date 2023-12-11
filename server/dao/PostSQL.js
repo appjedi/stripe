@@ -7,7 +7,7 @@ async function test1()
     host: '172.18.0.2',
     database: 'test_db',
     password: 'root',
-    port: 55432432,
+    port: 5432,
   })
   
   console.log(await pool.query('SELECT NOW()'))
