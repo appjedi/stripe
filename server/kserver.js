@@ -22,7 +22,7 @@ app.keys = ['Shh, its a secret!'];
 app.use(session(null, app));
 app.use(json(null));
 app.use(bodyParser());
-const GC_RELEASE = "2023-10-02";
+const GC_RELEASE = "2023-12-12";
 // 
 //const dao = new MainDAO(process.env.MONGO_DEV_URL);
 //const myConn = JSON.parse(process.env.MYSQL_DEV);
