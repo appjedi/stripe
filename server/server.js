@@ -41,7 +41,7 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 //console.log("STRIPE KEY", process.env.STRIPE_PRIVATE_KEY)
 const mongodb = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
-const GC_MONGO_URL =process.env.MONGO_URL;
+const GC_MONGO_URL = process.env.MONGO_URL;
 const GC_PUBLIC_DIR = path.join(__dirname + '/public/index.html').split("/index.html")[0];
 
 const storeItems = new Map([
@@ -50,13 +50,17 @@ const storeItems = new Map([
   [3, { priceInCents: 20, name: "Learn CSS Today" }],
 ])
 let ssn;
-const GC_RELEASE = "2023-01-28";
+const GC_RELEASE = "2023-12-18";
+app.get("/", (req, res) => {
+  ssn = req.session;
+  res.send(GC_RELEASE);
+});
 app.get("/release", (req, res) => {
   ssn = req.session;
   res.send(GC_RELEASE);
 });
-app.get ("/stripe",(req, res)=>{
-        res.sendFile(path.join(__dirname+'/public/stripe.html'));
+app.get("/stripe", (req, res) => {
+  res.sendFile(path.join(__dirname + '/public/stripe.html'));
 });
 app.get('/login', (req, res) => {
   const form =
@@ -75,10 +79,9 @@ app.post('/login', async (req, res) => {
   const password = req.body.password;
   console.log("/login:", username);
   const auth = login(username, password);
-  if (auth)
-  {
+  if (auth) {
     ssn = req.session;
-    ssn.user = auth;  
+    ssn.user = auth;
   }
   res.send({ auth: auth });
 });
@@ -157,30 +160,30 @@ app.get("/charge/:id", async (req, res) => {
 */
 
 app.get("/pay/:id", async (req, res) => {
-  try{
-  
+  try {
+
     const url = await charge();
     res.redirect(url);
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
 })
-const charge = async (item)=>{
+const charge = async (item) => {
   //const items = getCharges(id);
   const clientId = item.id;
-  console.log("PAY",item);
+  console.log("PAY", item);
   try {
     console.log("checkout");
-  
+
     const lineItems = [{
-            "price_data": {
-                "currency": "usd", "product_data":
-                    { "name": item.description },
-                "unit_amount": item.amount * 100
-            },
-            "quantity": 1
+      "price_data": {
+        "currency": "usd", "product_data":
+          { "name": item.description },
+        "unit_amount": item.amount * 100
+      },
+      "quantity": 1
     }];
-    
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -191,7 +194,7 @@ const charge = async (item)=>{
     })
     return { status: 1, url: session.url };
   } catch (e) {
-    return {status: -1, url:"error"}
+    return { status: -1, url: "error" }
   }
 }
 app.post("/charge", async (req, res) => {
@@ -206,32 +209,31 @@ app.post("/charge", async (req, res) => {
       fullName: req.body.fullName,
       email: req.body.email,
       amount: parseInt(req.body.amount),
-      description:"Donation",
+      description: "Donation",
       postDate: dt,
       status: 0,
-      paid:null
+      paid: null
     };
-   
+
     console.log("TimeID:", id);
     const jsonData = JSON.stringify(item);
     console.log("ITEM:", item);
-//    const storeItem = storeItems.get(1)
+    //    const storeItem = storeItems.get(1)
     const insert = "INSERT INTO charges(charge_id, item_id,client_id,email, full_name, json_data,description, amount,quantity,entered,paid,status,paid_by,token)VALUES";
     const values = `('${id}', ${item.itemId}, ${item.cliendId}, '${item.email}', '${item.fullName}', '${jsonData}', 'Donation', ${item.amount},1, SYSDATE(), 0, 0, '', '')`;
     console.log("INSERT", insert + values);
-   // connection.query(insert + values);
+    // connection.query(insert + values);
     mongoInsert(item);
     const s = await charge(item);
     //console.log("STRIPE", s);
-    if (s.status === 1000)
-    {
+    if (s.status === 1000) {
       console.log("STRIPE", s.url);
-      res.redirect(s.url);  
+      res.redirect(s.url);
     }
-    res.send({ status: 1, id:id,message: "charged posted", url:s.url });
+    res.send({ status: 1, id: id, message: "charged posted", url: s.url });
   } catch (e) {
     console.log("Post error: ", e);
-    res.send({ status: -1, id:0,message: "error posting...", errMsg: e });
+    res.send({ status: -1, id: 0, message: "error posting...", errMsg: e });
   }
 
 });
@@ -274,7 +276,7 @@ app.get("/success/:id/:token", async (req, res) => {
 
 });
 app.get("/cancel/:id/:token", async (req, res) => {
-   const id = req.params.id;
+  const id = req.params.id;
   try {
 
     const obj = { status: 1, message: "paid", id: id }
@@ -293,7 +295,7 @@ app.get("/cancel/:id/:token", async (req, res) => {
     const obj = { status: -1, message: "error", id: id }
     res.send(obj);
   }
-  
+
 });
 app.get("/chargeTest/:id/:name/:email", async (req, res) => {
   try {
@@ -320,8 +322,8 @@ app.get("/chargeTest/:id/:name/:email", async (req, res) => {
     const values = `('${id}', ${item.itemId}, ${item.cliendId}, '${item.email}', '${item.fullName}', '${jsonData}', '${storeItem.name}', ${storeItem.priceInCents}, ${item.quantity}, SYSDATE(), 0, 0, '', '')`;
     console.log("INSERT", insert + values);
     connection.query(insert + values);
- //   mongoInsert(item);
-    res.send({ status: 1, item:item, message: "charged posted" });
+    //   mongoInsert(item);
+    res.send({ status: 1, item: item, message: "charged posted" });
   } catch (e) {
     console.log("Post error: ", e);
     res.send({ status: -1, message: "error posting...", errMsg: e });
@@ -343,7 +345,7 @@ const mongoUpate = async (obj) => {
   console.log("mongoUpate:", obj);
   try {
     const db = await MongoClient.connect(GC_MONGO_URL, { useUnifiedTopology: true });
-  
+
     var dbo = db.db(GC_MONGO_DB);
     //  dbo.collection.update({ 'id': obj.id }, { $set: { 'status': obj.status, paid: obj.paid } })
     const resp = await dbo.collection(GC_MONGO_DOC).updateOne({ "id": obj.id }, { $set: { "status": obj.status, paid: obj.paid } });
@@ -411,7 +413,7 @@ VALUES('Renatal Application Fee', 50, 1, SYSDATE(), 1);
 */
 function getCharges(id) {
   try {
-    const query = 'SELECT * FROM charges' + (id > 0 ? " WHERE charge_id = '" + id+"'" : "");
+    const query = 'SELECT * FROM charges' + (id > 0 ? " WHERE charge_id = '" + id + "'" : "");
     console.log("GET CHARGES: ", query);
     const results = connection.query(query);
     console.log(results);
