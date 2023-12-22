@@ -50,7 +50,7 @@ const storeItems = new Map([
   [3, { priceInCents: 20, name: "Learn CSS Today" }],
 ])
 let ssn;
-const GC_RELEASE = "2023-12-18";
+const GC_RELEASE = "2023-12-21";
 app.get("/", (req, res) => {
   ssn = req.session;
   res.send(GC_RELEASE);
