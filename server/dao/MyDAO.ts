@@ -11,22 +11,6 @@ interface DBConnection {
 }
 let connection: DBConnection;
 let User: any;
-/*
-const User = sequelize.define("users", {
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  roleId: {
-    type: DataTypes.INTEGER,
-  }
-});
-*/
-
 
 class MyDAO {
   constructor(connObj: any) {
@@ -87,14 +71,14 @@ class MyDAO {
 }
 export default MyDAO;
 
-const testIt = async ()=>{
-  const localDB ={
-    database:"dev",
-    user:"root",
-    password:"Jedi2023",
-    host:"localhost"
-  }
+const testIt = async () => {
+  const localDB = {
+    database: "dev",
+    user: "root",
+    password: "Jedi2023",
+    host: "localhost",
+  };
   const db = new MyDAO(localDB);
-  const results =await db.query("SELECT * FROM users",[]);
-  console.log (results);
-}
+  const results = await db.query("SELECT * FROM users", []);
+  console.log(results);
+};

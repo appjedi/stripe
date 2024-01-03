@@ -1,5 +1,5 @@
 const button = document.getElementById("checkoutButton");
-const SERVER_ROOT_URL = "http://localhost:3000/";
+const SERVER_ROOT_URL = "http://localhost:8080/";
 button.addEventListener("click",async () => {
   console.log("client checkout!!!!");
   const test = [
@@ -27,7 +27,7 @@ button.addEventListener("click",async () => {
   console.log("JSON", json);
   if (json.status === 1)
   {
-    window.open(json.url);  
+    //window.open(json.url);  
   }
 })
 

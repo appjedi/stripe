@@ -3,8 +3,8 @@ const MySql = require('sync-mysql');
 const GC_CONNECTIONS = [{
   host: 'localhost',
   user: 'root',
-  database: 'bank',
-  password: ''
+  database: 'dev',
+  password: 'Jedi2023'
 },
 {
   host: 'appdojo.net',
@@ -12,9 +12,9 @@ const GC_CONNECTIONS = [{
   database: 'appjedin_training',
   password: 'Sensei2022!'
 }];
-const GC_CONN_IDX = 1;
+const GC_CONN_IDX = 0;
 var connection = new MySql(GC_CONNECTIONS[GC_CONN_IDX]);
-const port = 3000;
+const port = 8080;
 const bodyParser = require('body-parser');
 const express = require("express");
 const app = express();
