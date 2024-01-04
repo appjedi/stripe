@@ -25,7 +25,7 @@ const GC_PRODUCTS = [
     id: 4,
     name: "Donation",
     description:
-      "Wado Ki Kai is a 501(c)3 non profit.  Your donation is tax deductible.",
+      "Wado Ki Kai is a 501(c)3 non profit.  Your donation is tax deductible.\n Quantity is the dollar amount, i.e. Quantity 10 is $10 donation",
     price: 1,
     qty: 0,
   },
@@ -117,7 +117,7 @@ class Service {
       return "error";
     }
   };
-  addKeyValue = async (key: string, value: string) => {};
+  addKeyValue = async (key: string, value: string) => { };
   getKeyValues = async (): Promise<Array<KeyValue>> => {
     try {
       //const rows: Array<KeyValue>=new Array<KeyValue>();
