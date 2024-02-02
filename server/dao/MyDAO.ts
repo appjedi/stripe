@@ -1,4 +1,5 @@
 import { Sequelize, DataTypes, QueryTypes } from "sequelize";
+import { User } from "../models";
 
 let sequelize: Sequelize;
 
@@ -68,6 +69,10 @@ class MyDAO {
   getConn = () => {
     return sequelize;
   };
+  getUser = async (id: number) => {
+    const user = await User.findByPk(id);
+    return user;
+  }
 }
 export default MyDAO;
 
