@@ -38,6 +38,7 @@ module.exports =
                 posted: String
             }, { collection: 'donations' });
             this.DonationData = mongoose.model('DonationData', this.donationSchema);
+            
             this.purchaseSchema = new Schema({
                 id: String,
                 userId: String,
