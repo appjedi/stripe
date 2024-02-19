@@ -181,10 +181,14 @@ class Service {
       return { status: -1, message: "error" };
     }
   };
-
   getUsers = async (id: any) => {
-    const users = await this.mainDAO.getUsers();
-    return users;
+    if (id) {
+      const user = await this.mainDAO.getUserById(id);
+      return user;
+    } else {
+      const users = await this.mainDAO.getUsers();
+      return users;
+    }
   };
   getStudents = async (id: number) => {
     try {
@@ -261,6 +265,37 @@ class Service {
     ); //dao, id, amount, name
     console.log("STRIPE:", resp2);
     return resp2;
+  };
+
+  chargeByID = async (
+    id: number
+  ) => {
+    const charge = await this.dao.getCharge(id);
+    const item: IItem = {
+      productId: charge['productId'],
+      quantity: charge['quantity'],
+      price: charge['amount'],
+      description: charge['description'],
+    };
+    console.log("service.charge:", item);
+    const items: Array<IItem> = [item];
+
+    const cart: ICart = {
+      customerId: 1,
+      email: charge['email'],
+      fullName: charge['fullName'],
+      cart: items,
+    };
+    //const resp: Object = await this.mainDAO.addPurchase(cart);
+    //console.log("MainDAO.RESP", resp);
+    const resp = await Charge.charge(
+      this.mainDAO,
+      charge["productId"],
+      charge["amount"],
+      "purchase"
+    ); //dao, id, amount, name
+    console.log("STRIPE:", resp);
+    return resp;
   };
   postAttendance = async (list) => {
     const msg = await this.mainDAO.postAttendance(list);

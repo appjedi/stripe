@@ -115,8 +115,15 @@ router.post("/video", async (ctx: Context) => {
 });
 router.get("/user", async (ctx: Context) => {
   try {
-    ctx.body = ctx.session ? ctx.session["user"] : "";
-  } catch (e) {}
+    //ctx.body = ctx.session ? ctx.session["user"] : "";
+
+  } catch (e) { }
+});
+router.get("/users", async (ctx: Context) => {
+  try {
+    //ctx.body = ctx.session ? ctx.session["user"] : "";
+
+  } catch (e) { }
 });
 router.get("/products", async (ctx: Context) => {
   const products = await service.getProducts();

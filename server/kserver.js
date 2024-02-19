@@ -108,6 +108,9 @@ router.get("/api/products", async (ctx: Context) => {
   console.log("products:", products);
   ctx.body = products;
 });
+router.get("/api/charge/:id", async (ctx: Context) => {
+
+});
 router.post("/charge", async (ctx: Context) => {
   try {
     console.log("charge:", ctx.request.body);

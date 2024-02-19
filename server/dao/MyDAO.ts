@@ -1,4 +1,5 @@
 import { Sequelize, DataTypes, QueryTypes } from "sequelize";
+import { User } from "../models";
 
 let sequelize: Sequelize;
 
@@ -68,6 +69,26 @@ class MyDAO {
   getConn = () => {
     return sequelize;
   };
+  getUser = async (id: number) => {
+    const user = await User.findByPk(id);
+    return user;
+  }
+  deleteUser = async (id: string) => {
+    const u = await User.findById(id);
+  }
+  updateUser = async (id: number, user: any) => {
+    const u = await User.findById(id);
+    u.username = user.username;
+    u.save();
+    const resp = await User.update({ user },
+      {
+        where: { id: user['id'] }
+      });
+  }
+  getCharge = async (id: number) => {
+    const charge = await this.query("SELECT * FROM charge WHERE id =?", [id]);
+    return charge;
+  }
 }
 export default MyDAO;
 
