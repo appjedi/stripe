@@ -76,7 +76,7 @@ class Service {
       console.log("myConn", myConn);
       this.dao = new MyDAO(JSON.parse(myConn + ""));
       let temp = this.getKeyValueLocal("MAIL_OPTIONS", "");
-      //console.log("MAIL_OPTIONS:", temp);
+      console.log("MAIL_OPTIONS:", temp);
       let obj = JSON.parse(temp + "");
       //console.log("MAIL_OPTIONS:", JSON.stringify(obj));
       this.mailAuth = <IMailAuth>obj;
@@ -117,7 +117,7 @@ class Service {
       return "error";
     }
   };
-  addKeyValue = async (key: string, value: string) => { };
+  addKeyValue = async (key: string, value: string) => {};
   getKeyValues = async (): Promise<Array<KeyValue>> => {
     try {
       //const rows: Array<KeyValue>=new Array<KeyValue>();
@@ -267,23 +267,21 @@ class Service {
     return resp2;
   };
 
-  chargeByID = async (
-    id: number
-  ) => {
+  chargeByID = async (id: number) => {
     const charge = await this.dao.getCharge(id);
     const item: IItem = {
-      productId: charge['productId'],
-      quantity: charge['quantity'],
-      price: charge['amount'],
-      description: charge['description'],
+      productId: charge["productId"],
+      quantity: charge["quantity"],
+      price: charge["amount"],
+      description: charge["description"],
     };
     console.log("service.charge:", item);
     const items: Array<IItem> = [item];
 
     const cart: ICart = {
       customerId: 1,
-      email: charge['email'],
-      fullName: charge['fullName'],
+      email: charge["email"],
+      fullName: charge["fullName"],
       cart: items,
     };
     //const resp: Object = await this.mainDAO.addPurchase(cart);
@@ -340,7 +338,7 @@ class Service {
     const resp = await this.mainDAO.updateFromStripe(id, status);
     return resp;
   };
-
+  // {"from":"App Jedi <appjedi.net@gmail.com>","user":"appjedi.net@gmail.com","pass":"dekxwtulmsryovls","port":"465","host":"smtp.gmail.com"}
   sendMail = async (mailOptions: any) => {
     try {
       const transporter = nodeMailer.createTransport({
